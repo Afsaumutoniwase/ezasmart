@@ -31,6 +31,5 @@ Models/archive/
 Models/trained_models/model.safetensors
 Models/trained_chatbot_model/model.safetensors
 Models/Growmate/
-Models/ai_nutrient_analysis/
 # Node modules (if any)
 node_modules/

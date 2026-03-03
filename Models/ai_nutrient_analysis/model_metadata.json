@@ -1,0 +1,34 @@
+{
+  "feature_columns": [
+    "Crop_ID_encoded",
+    "pH_Level",
+    "EC_Value",
+    "Ambient_Temp"
+  ],
+  "crop_classes": [
+    "Lettuce",
+    "Peppers",
+    "Tomatoes"
+  ],
+  "action_classes": [
+    "Add_Nutrients",
+    "Add_pH_Down",
+    "Add_pH_Up",
+    "Dilute",
+    "Maintain"
+  ],
+  "model_performance": {
+    "random_forest": {
+      "accuracy": 0.9864025213867628,
+      "precision": 0.9863176256324805,
+      "recall": 0.9864025213867628,
+      "f1_score": 0.9863243043531724
+    },
+    "logistic_regression": {
+      "accuracy": 0.9321927059882935,
+      "precision": 0.9325271656020708,
+      "recall": 0.9321927059882935,
+      "f1_score": 0.925631942768407
+    }
+  }
+}
