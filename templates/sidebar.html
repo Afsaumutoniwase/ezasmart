@@ -1,0 +1,33 @@
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
+        </a>
+    </div>
+    <div class="sidebar-menu">
+        <a href="{{ url_for('forums') }}" class="{% if request.path == url_for('forums') %}active{% endif %}">
+            <span class="glyphicon glyphicon-comment"></span> Forums
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="{% if request.path == url_for('dashboard') %}active{% endif %}">
+            <span class="glyphicon glyphicon-leaf"></span> Hydroponic
+        </a>
+        <a href="{{ url_for('profile') }}" class="{% if request.path == url_for('profile') %}active{% endif %}">
+            <span class="glyphicon glyphicon-user"></span> Profile
+        </a>
+        <a href="{{ url_for('resources') }}" class="{% if request.path == url_for('resources') %}active{% endif %}">
+            <span class="glyphicon glyphicon-book"></span> Resources
+        </a>
+        <a href="{{ url_for('account_settings') }}" class="{% if request.path == url_for('account_settings') %}active{% endif %}">
+            <span class="glyphicon glyphicon-cog"></span> Settings
+        </a>
+        <a href="{{ url_for('help') }}" class="{% if request.path == url_for('help') %}active{% endif %}">
+            <span class="glyphicon glyphicon-question-sign"></span> Help
+        </a>
+        <a href="{{ url_for('logout') }}" 
+           class="flex items-center justify-center px-2 py-0 rounded"
+           style="background: linear-gradient(135deg, #28844b 0%, #1f6938 100%); color: white !important;">
+            <span class="glyphicon glyphicon-log-out" style="color: white !important;"></span>
+            <span style="color: white !important;">Logout</span>
+        </a>
+    </div>
+</div>

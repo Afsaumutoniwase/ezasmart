@@ -1,0 +1,10 @@
+{
+  "model_name": "Afsa20/Farmsmart_Growmate",
+  "total_pairs": 1130,
+  "stackexchange_pairs": 115,
+  "wikipedia_pairs": 1015,
+  "retrieval_threshold": 0.4,
+  "tfidf_features": 5000,
+  "created_date": "2026-03-02 13:22:17",
+  "python_version": "3.12.12"
+}

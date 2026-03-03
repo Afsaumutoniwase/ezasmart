@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+venv/
+.env
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+instance/
+*.db
+*.sqlite
+
+# Uploads
+static/img/uploads/
+
+# Models - Large files (use Git LFS or download from HuggingFace)
+Models/archive/
+Models/trained_models/model.safetensors
+Models/trained_chatbot_model/model.safetensors
+Models/Growmate/
+Models/ai_nutrient_analysis/
+# Node modules (if any)
+node_modules/

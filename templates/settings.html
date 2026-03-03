@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+    {% include 'flash_messages.html' %}
+   
+    <div class="py-4 rounded-2xl shadow-lg mb-6" style="background: linear-gradient(135deg, #28844b 0%, #72BF78 100%);">
+        <div class="text-center py-2">
+            <h1 class="text-5xl font-extrabold text-white drop-shadow-md">Account Settings</h1>
+            <p class="text-xl mt-3 font-medium text-white">
+                Manage your account settings and security here.
+            </p>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-lg rounded-lg p-8 space-y-8">
+        <!-- Change Password Form -->
+        <form method="POST" action="{{ url_for('account_settings') }}" class="space-y-5">
+            <h3 class="text-2xl font-bold mb-4" style="color: #387F39;">Change Password</h3>
+            
+            <!-- Current Password -->
+            <div class="space-y-2">
+                <label for="current_password" class="text-base font-semibold" style="color: #387F39;">Current Password</label>
+                <input type="password" id="current_password" name="current_password" class="w-full p-3 rounded-md text-base" style="border: 2px solid #A2CA71;" required>
+            </div>
+
+            <!-- New Password -->
+            <div class="space-y-2">
+                <label for="new_password" class="text-base font-semibold" style="color: #387F39;">New Password</label>
+                <input type="password" id="new_password" name="new_password" class="w-full p-3 rounded-md text-base" style="border: 2px solid #A2CA71;" required>
+            </div>
+
+            <!-- Confirm New Password -->
+            <div class="space-y-2">
+                <label for="confirm_password" class="text-base font-semibold" style="color: #387F39;">Confirm New Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="w-full p-3 rounded-md text-base" style="border: 2px solid #A2CA71;" required>
+            </div>
+            
+            <!-- Change Password Button -->
+            <div class="mt-4">
+                <button type="submit" name="change_password" class="w-full py-3 text-white rounded-md transition text-lg font-semibold" style="background: linear-gradient(135deg, #28844b 0%, #1f6938 100%);" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Change Password</button>
+            </div>
+            
+        </form>
+
+        <!-- Divider -->
+        <hr style="border-color: #A2CA71;">
+
+        <!-- Delete Profile Form -->
+        <form method="POST" action="{{ url_for('account_settings') }}">
+            <h3 class="text-2xl font-bold mb-4" style="color: #387F39;">Delete Profile</h3>
+            <p class="text-base text-gray-600 mb-4">Once your account is deleted, it cannot be undone. Are you sure you want to delete your profile?</p>
+            <button type="submit" name="delete_profile" class="w-full py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition text-lg font-semibold">Delete Account</button>
+        </form>
+    </div>
+{% endblock %}

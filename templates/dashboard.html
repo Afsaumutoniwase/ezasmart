@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+
+{% block title %}Farmer Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-1 px-4">
+    {% include 'flash_messages.html' %}
+
+    <!-- HERO SECTION - AI-Powered Nutrient Analysis (Main Focus) -->
+    <div class="mb-8">
+        <div class="bg-white shadow-2xl rounded-2xl p-10" style="border: 2px solid rgba(114, 191, 120, 0.3);">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-block rounded-full p-4 mb-4 shadow-lg" style="background: linear-gradient(135deg, #28844b 0%, #a8cf45 100%);">
+                        <i class="bi bi-bar-chart-line-fill text-5xl text-white"></i>
+                    </div>
+                    <h2 class="text-5xl font-extrabold mb-3" style="color: #387F39;">
+                        AI-Powered Nutrient Analysis
+                    </h2>
+                    <p class="text-gray-600 text-xl max-w-3xl mx-auto leading-relaxed">
+                        <strong>Started your hydroponic system?</strong> Great! Use your affordable handheld pH and EC meters to take readings, enter them below, and get professional-level AI recommendations instantly—<strong>no expensive equipment required!</strong>
+                    </p>
+                </div>
+
+                <!-- Sensor Input Form -->
+                <form id="sensor-form" class="space-y-6">
+                    <!-- Input Fields Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Crop Type -->
+                        <div class="relative">
+                            <label for="crop-id" class="block text-lg font-bold mb-2 flex items-center" style="color: #387F39;">
+                                <i class="bi bi-flower1 mr-2" style="color: #72BF78;"></i>
+                                Crop Type <span class="text-red-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <select 
+                                    id="crop-id" 
+                                    name="crop-id"
+                                    class="w-full px-4 py-4 pl-11 border-2 border-gray-300 rounded-lg transition-all duration-200 appearance-none bg-white text-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                    required
+                                >
+                                    <option value="">Choose your crop...</option>
+                                    <option value="Lettuce">🥬 Lettuce</option>
+                                    <option value="Peppers">🌶️ Peppers</option>
+                                    <option value="Tomatoes">🍅 Tomatoes</option>
+                                </select>
+                                <i class="bi bi-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                            </div>
+
+                        </div>
+
+                        <!-- pH Level -->
+                        <div class="relative">
+                            <label for="ph-level" class="block text-lg font-bold mb-2 flex items-center" style="color: #387F39;">
+                                <i class="bi bi-droplet-half mr-2" style="color: #72BF78;"></i>
+                                pH Level <span class="text-red-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="number" 
+                                    id="ph-level" 
+                                    name="ph-level"
+                                    step="0.1"
+                                    min="0"
+                                    max="14"
+                                    class="w-full px-4 py-4 pl-11 border-2 border-gray-300 rounded-lg transition-all duration-200 text-lg"
+                                    placeholder="e.g., 6.5"
+                                    required
+                                />
+                                <i class="bi bi-percent absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <span class="text-base text-gray-500 mt-1 block">Optimal: 5.5 - 6.5</span>
+                        </div>
+
+                        <!-- EC Value -->
+                        <div class="relative">
+                            <label for="ec-value" class="block text-lg font-bold mb-2 flex items-center" style="color: #387F39;">
+                                <i class="bi bi-lightning-charge mr-2" style="color: #72BF78;"></i>
+                                EC Value (mS/cm) <span class="text-red-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="number" 
+                                    id="ec-value" 
+                                    name="ec-value"
+                                    step="0.1"
+                                    min="0"
+                                    class="w-full px-4 py-4 pl-11 border-2 border-gray-300 rounded-lg transition-all duration-200 text-lg"
+                                    placeholder="e.g., 2.4"
+                                    required
+                                />
+                                <i class="bi bi-speedometer absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <span class="text-base text-gray-500 mt-1 block">Electrical Conductivity</span>
+                        </div>
+
+                        <!-- Temperature -->
+                        <div class="relative">
+                            <label for="temp" class="block text-lg font-bold mb-2 flex items-center" style="color: #387F39;">
+                                <i class="bi bi-thermometer-half mr-2" style="color: #72BF78;"></i>
+                                Temperature (°C) <span class="text-red-500 ml-1">*</span>
+                            </label>
+                            <div class="relative">
+                                <input 
+                                    type="number" 
+                                    id="temp" 
+                                    name="temp"
+                                    step="0.1"
+                                    class="w-full px-4 py-4 pl-11 border-2 border-gray-300 rounded-lg transition-all duration-200 text-lg"
+                                    placeholder="e.g., 24.5"
+                                    required
+                                />
+                                <i class="bi bi-thermometer absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <span class="text-base text-gray-500 mt-1 block">Optimal: 18 - 26°C</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="sensor-submit-btn"
+                        class="w-full bg-gradient-to-r from-[#28844b] to-[#1f6938] text-white py-5 px-6 rounded-xl hover:from-[#1f6938] hover:to-[#28844b] transition-all duration-300 font-bold text-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center group"
+                    >
+                        <i class="bi bi-cpu-fill mr-2 group-hover:animate-spin"></i>
+                        Analyze with AI
+                        <i class="bi bi-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </form>
+
+                <!-- Sensor Loading Indicator -->
+                <div id="sensor-loading" class="hidden mt-8">
+                    <div class="rounded-xl p-8 text-center" style="background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e9 100%);">
+                        <div class="inline-block relative">
+                            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4" style="border-color: #72BF78;"></div>
+                            <i class="bi bi-cpu-fill absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl" style="color: #72BF78;"></i>
+                        </div>
+                        <p class="mt-6 text-gray-700 font-bold text-2xl">Analyzing sensor data with AI...</p>
+                        <p class="mt-2 text-gray-500 text-lg">Please wait while we process your data</p>
+                    </div>
+                </div>
+
+                <!-- Sensor Prediction Display -->
+                <div id="sensor-prediction" class="hidden mt-8">
+                    <div class="rounded-xl p-8 shadow-lg" style="background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e9 100%); border-left: 4px solid #72BF78;">
+                        <div class="flex items-center mb-4">
+                            <div class="rounded-full p-3 mr-4" style="background-color: #72BF78;">
+                                <i class="bi bi-check-circle-fill text-white text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-4xl font-bold" style="color: #387F39;">
+                                    AI Recommendation
+                                </h3>
+                                <p class="text-lg" style="color: #72BF78;">Based on your sensor readings</p>
+                            </div>
+                        </div>
+                        <div id="sensor-prediction-content" class="text-gray-700 leading-relaxed text-xl bg-white p-6 rounded-lg">
+                            <!-- Prediction will be inserted here -->
+                        </div>
+                        <button 
+                            onclick="resetSensorForm()" 
+                            class="mt-6 w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-6 rounded-lg hover:from-gray-600 hover:to-gray-700 transition duration-300 font-semibold text-base flex items-center justify-center group"
+                        >
+                            <i class="bi bi-arrow-counterclockwise mr-2 group-hover:rotate-180 transition-transform duration-500"></i>
+                            Analyze Again
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sensor Error Display -->
+                <div id="sensor-error" class="hidden mt-8">
+                    <div class="bg-gradient-to-br from-red-50 to-red-100 border-l-4 border-red-500 rounded-xl p-8 shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-red-500 rounded-full p-3 mr-4">
+                                <i class="bi bi-exclamation-triangle-fill text-white text-3xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-4xl font-bold text-red-800">
+                                    Error Occurred
+                                </h3>
+                                <p class="text-red-600 text-lg">Unable to process your request</p>
+                            </div>
+                        </div>
+                        <div id="sensor-error-content" class="text-red-700 bg-white p-6 rounded-lg text-lg">
+                            <!-- Error message will be inserted here -->
+                        </div>
+                        <button 
+                            onclick="resetSensorForm()" 
+                            class="mt-6 w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-6 rounded-lg hover:from-gray-600 hover:to-gray-700 transition duration-300 font-semibold text-base flex items-center justify-center group"
+                        >
+                            <i class="bi bi-arrow-counterclockwise mr-2 group-hover:rotate-180 transition-transform duration-500"></i>
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="bg-white rounded-xl shadow-md p-6 mt-6">
+        <h3 class="text-xl font-bold mb-4" style="color: #387F39;">Quick Access</h3>
+        <div class="flex flex-wrap gap-3">
+            <a href="{{ url_for('forums') }}" class="inline-flex items-center px-4 py-2 rounded-lg transition no-underline" style="background-color: #f8fdf9; color: #387F39; border: 1px solid #A2CA71;" onmouseover="this.style.backgroundColor='#e8f5e9'" onmouseout="this.style.backgroundColor='#f8fdf9'">
+                <i class="bi bi-people-fill mr-2"></i> Forums
+            </a>
+            <a href="{{ url_for('resources') }}" class="inline-flex items-center px-4 py-2 rounded-lg transition no-underline" style="background-color: #f8fdf9; color: #387F39; border: 1px solid #A2CA71;" onmouseover="this.style.backgroundColor='#e8f5e9'" onmouseout="this.style.backgroundColor='#f8fdf9'">
+                <i class="bi bi-book-fill mr-2"></i> Resources
+            </a>
+            <a href="{{ url_for('home') }}#hydroponic-systems" class="inline-flex items-center px-4 py-2 rounded-lg transition no-underline" style="background-color: #f8fdf9; color: #387F39; border: 1px solid #A2CA71;" onmouseover="this.style.backgroundColor='#e8f5e9'" onmouseout="this.style.backgroundColor='#f8fdf9'">
+                <i class="bi bi-droplet-fill mr-2"></i> Systems
+            </a>
+            <a href="{{ url_for('help') }}" class="inline-flex items-center px-4 py-2 rounded-lg transition no-underline" style="background-color: #f8fdf9; color: #387F39; border: 1px solid #A2CA71;" onmouseover="this.style.backgroundColor='#e8f5e9'" onmouseout="this.style.backgroundColor='#f8fdf9'">
+                <i class="bi bi-question-circle-fill mr-2"></i> Help
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

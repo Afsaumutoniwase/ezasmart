@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>EzaSmart</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link rel="icon" href="{{ url_for('static', filename='img/loader.png') }}" type="image/x-icon">
+
+  <link href="../static/img/favicon.png" rel="icon">
+  <link href="../static/img/apple-touch-icon.png" rel="apple-touch-icon">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../static/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../static/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../static/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet">
+  
+</head>
+
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="index.html" class="logo d-flex align-items-center me-auto">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo">
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Home</a></li>
+          <li><a href="#what-is-hydroponics">What is Hydroponics</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#benefits">Benefits</a></li>
+          <li><a href="#hydroponic-systems">Systems</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+      <a class="btn-getstarted" href="{{ url_for('login') }}">Get Started</a>
+    </div>
+  </header>
+
+  <main class="main">
+    
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+
+      <img src="{{ url_for('static', filename='img/hero-bg-abstract.jpg') }}" alt="" data-aos="fade-in" class="">
+
+      <div class="container">
+        <div class="row justify-content-center" data-aos="zoom-out">
+          <div class="col-xl-7 col-lg-9 text-center">
+            <h1>Never Tried Hydroponics? Start Here!</h1>
+            <p>Learn soil-free farming from scratch—no experience needed. Join a community of farmers, access step-by-step guides, and grow successfully with affordable AI tools that work with simple handheld meters.</p>
+          </div>
+        </div>
+        <div class="text-center" data-aos="zoom-out" data-aos-delay="100">
+          <a href="{{ url_for('login') }}" class="btn-get-started">Begin Your Journey</a>
+        </div>
+
+      </div>
+
+    </section><!-- /Hero Section -->
+
+    <!-- What is Hydroponics Section -->
+    <section id="what-is-hydroponics" class="section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>What is Hydroponic Farming?</h2>
+        <p>Understanding the basics: Growing plants without soil</p>
+      </div>
+      
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-12" data-aos="fade-up" data-aos-delay="100">
+            <div class="rounded-lg p-6" style="background: transparent;">
+              <div class="row">
+                <div class="col-lg-8">
+                  <h3 class="mb-4" style="color: #28844b; font-size: 1.8rem;">A Beginner's Guide to Soilless Farming</h3>
+                  <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                    Hydroponics is a method of growing plants without soil. Instead of soil, plants grow in a nutrient-rich water solution that provides all the essential minerals they need to thrive. Think of it as feeding your plants directly through water!
+                  </p>
+                  
+                  <h4 style="color: #28844b; font-size: 1.4rem; margin-top: 2rem; margin-bottom: 1rem;">How Does It Work?</h4>
+                  <div class="row">
+                    <div class="col-md-4 mb-3">
+                      <div class="d-flex align-items-start">
+                        <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                          <span style="color: white; font-weight: bold; font-size: 1.2rem;">1</span>
+                        </div>
+                        <div>
+                          <h5 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Setup System</h5>
+                          <p style="font-size: 0.95rem; color: #666;">Choose a hydroponic system type (NFT, DWC, or Drip)</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                      <div class="d-flex align-items-start">
+                        <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                          <span style="color: white; font-weight: bold; font-size: 1.2rem;">2</span>
+                        </div>
+                        <div>
+                          <h5 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Add Nutrients</h5>
+                          <p style="font-size: 0.95rem; color: #666;">Mix water with hydroponic nutrients for plant growth</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-3">
+                      <div class="d-flex align-items-start">
+                        <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 15px; flex-shrink: 0;">
+                          <span style="color: white; font-weight: bold; font-size: 1.2rem;">3</span>
+                        </div>
+                        <div>
+                          <h5 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem;">Monitor & Grow</h5>
+                          <p style="font-size: 0.95rem; color: #666;">Use our AI tools to monitor pH, EC, and temperature</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-lg-4 text-center">
+                  <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 15px; padding: 2rem; color: white;">
+                    <i class="bi bi-lightbulb-fill" style="font-size: 4rem; margin-bottom: 1rem;"></i>
+                    <h4 style="font-size: 1.3rem; margin-bottom: 1rem;">Did You Know?</h4>
+                    <p style="font-size: 1rem; line-height: 1.6;">
+                      Hydroponic farming uses <strong>90% less water</strong> than traditional farming and can grow crops <strong>30-50% faster</strong>!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /What is Hydroponics Section -->
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>About EzaSmart</h2>
+        <p>Introducing complete beginners to hydroponic farming—breaking down knowledge and cost barriers.</p>
+      </div><!-- End Section Title -->
+    
+      <div class="container">
+        <div class="row gy-4">
+    
+          <!-- About EzaSmart -->
+          <div class="col-lg-6 content" data-aos="fade-up" data-aos-delay="100">
+            <p>
+              <strong>Never heard of hydroponics? Perfect!</strong> EzaSmart is designed for farmers with zero hydroponic experience. We teach you everything from the ground up—what hydroponics is, how it works, and how to get started. No technical background required.
+            </p>
+            <ul>
+              <li><i class="bi bi-check2-circle"></i> <span><strong>Complete Beginner Resources:</strong> Learn what hydroponics is and how to start from scratch.</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span><strong>Community Knowledge Sharing:</strong> Connect with other farmers, ask questions, share experiences.</span></li>
+              <li><i class="bi bi-check2-circle"></i> <span><strong>24/7 AI Chatbot:</strong> Get instant answers about nutrients, systems, and troubleshooting.</span></li>
+            </ul>
+          </div>
+    
+          <!-- Hydroponic Farming Info -->
+          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
+            <p>
+              <strong>Worried about expensive equipment?</strong> You don't need professional-grade sensors! Our AI Nutrient Analysis works with affordable handheld pH and EC meters that cost a fraction of traditional monitoring systems. Simply read your meters and get expert-level recommendations—making professional hydroponics accessible to every farmer.
+            </p>
+            <a href="#services" class="read-more"><span>See How It Works</span><i class="bi bi-arrow-right"></i></a>
+          </div>
+    
+        </div>
+
+      </div>
+
+    </section>
+    <!-- /About Section -->
+
+    <!-- Why Choose Hydroponics Section -->
+    <section id="benefits" class="section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Why Choose Hydroponic Farming?</h2>
+        <p>Discover the benefits that make hydroponics perfect for African farmers</p>
+      </div>
+      
+      <div class="container">
+        <div class="row gy-4">
+          
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="text-center p-4" style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%;">
+              <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i class="bi bi-droplet-fill" style="font-size: 2.5rem; color: white;"></i>
+              </div>
+              <h3 style="font-size: 1.4rem; color: #28844b; margin-bottom: 1rem;">90% Less Water</h3>
+              <p style="font-size: 1rem; color: #666; line-height: 1.6;">
+                Perfect for water-scarce regions. Hydroponic systems recirculate water, drastically reducing consumption compared to traditional farming.
+              </p>
+            </div>
+          </div>
+          
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="text-center p-4" style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%;">
+              <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i class="bi bi-speedometer2" style="font-size: 2.5rem; color: white;"></i>
+              </div>
+              <h3 style="font-size: 1.4rem; color: #28844b; margin-bottom: 1rem;">Faster Growth</h3>
+              <p style="font-size: 1rem; color: #666; line-height: 1.6;">
+                Crops grow 30-50% faster than in soil. Get more harvests per year and increase your income significantly.
+              </p>
+            </div>
+          </div>
+          
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="text-center p-4" style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%;">
+              <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i class="bi bi-cloud-sun-fill" style="font-size: 2.5rem; color: white;"></i>
+              </div>
+              <h3 style="font-size: 1.4rem; color: #28844b; margin-bottom: 1rem;">Weather Independent</h3>
+              <p style="font-size: 1rem; color: #666; line-height: 1.6;">
+                Farm year-round regardless of climate. No more worrying about droughts, floods, or unpredictable weather patterns.
+              </p>
+            </div>
+          </div>
+          
+          <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+            <div class="text-center p-4" style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%;">
+              <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i class="bi bi-bug-fill" style="font-size: 2.5rem; color: white;"></i>
+              </div>
+              <h3 style="font-size: 1.4rem; color: #28844b; margin-bottom: 1rem;">Fewer Pests</h3>
+              <p style="font-size: 1rem; color: #666; line-height: 1.6;">
+                No soil means fewer soil-borne pests and diseases. Reduce or eliminate the need for harmful pesticides.
+              </p>
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- Additional Benefits Row -->
+        <div class="row gy-4 mt-4">
+          
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="d-flex align-items-start p-3" style="background: #f8f9fa; border-radius: 10px;">
+              <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: #28844b; margin-right: 1rem; flex-shrink: 0;"></i>
+              <div>
+                <h4 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Space Efficient</h4>
+                <p style="font-size: 0.95rem; color: #666; margin: 0;">Grow more crops in less space—perfect for urban farming or limited land areas.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="d-flex align-items-start p-3" style="background: #f8f9fa; border-radius: 10px;">
+              <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: #28844b; margin-right: 1rem; flex-shrink: 0;"></i>
+              <div>
+                <h4 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Better Nutrition</h4>
+                <p style="font-size: 0.95rem; color: #666; margin: 0;">You control exactly what nutrients your plants receive for optimal health and taste.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="d-flex align-items-start p-3" style="background: #f8f9fa; border-radius: 10px;">
+              <i class="bi bi-check-circle-fill" style="font-size: 2rem; color: #28844b; margin-right: 1rem; flex-shrink: 0;"></i>
+              <div>
+                <h4 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Sustainable Future</h4>
+                <p style="font-size: 0.95rem; color: #666; margin: 0;">Eco-friendly farming that conserves resources and protects the environment.</p>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </section><!-- /Why Choose Hydroponics Section -->
+
+    <!-- Hydroponic Systems Section -->
+    <section id="hydroponic-systems" class="section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Hydroponic Systems You Can Use</h2>
+        <p>Choose the right system for your farming needs and skill level</p>
+      </div>
+      
+      <div class="container">
+        <div class="row gy-4">
+          
+          <!-- NFT System -->
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+            <div style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(114, 191, 120, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(114, 191, 120, 0.15)'">
+              <img src="{{ url_for('static', filename='img/nft.jpg') }}" style="width: 100%; height: 200px; object-fit: cover;" alt="NFT System">
+              <div style="padding: 1.5rem;">
+                <h3 style="color: #28844b; font-size: 1.3rem; margin-bottom: 1rem;">Nutrient Film Technique (NFT)</h3>
+                <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.5rem;">A thin film of nutrient-rich water flows over the plant roots, ideal for fast-growing crops like lettuce and herbs.</p>
+                <div style="background: #e8f5e9; padding: 0.75rem; border-radius: 8px; margin-top: 1rem;">
+                  <p style="margin: 0; font-size: 0.85rem; color: #2e7d32;"><strong>Best For:</strong> Leafy greens, herbs</p>
+                  <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #2e7d32;"><strong>Skill Level:</strong> Intermediate</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- DWC System -->
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="150">
+            <div style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(114, 191, 120, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(114, 191, 120, 0.15)'">
+              <img src="{{ url_for('static', filename='img/dwc.jpg') }}" style="width: 100%; height: 200px; object-fit: cover;" alt="DWC System">
+              <div style="padding: 1.5rem;">
+                <h3 style="color: #28844b; font-size: 1.3rem; margin-bottom: 1rem;">Deep Water Culture (DWC)</h3>
+                <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.5rem;">Plants are suspended in nutrient-rich water with constant oxygen supply. Great for beginners!</p>
+                <div style="background: #e3f2fd; padding: 0.75rem; border-radius: 8px; margin-top: 1rem;">
+                  <p style="margin: 0; font-size: 0.85rem; color: #1565c0;"><strong>Best For:</strong> Leafy greens, tomatoes</p>
+                  <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #1565c0;"><strong>Skill Level:</strong> Beginner</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Wick System -->
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+            <div style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(114, 191, 120, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(114, 191, 120, 0.15)'">
+              <img src="{{ url_for('static', filename='img/Wick-System.jpg') }}" style="width: 100%; height: 200px; object-fit: cover;" alt="Wick System">
+              <div style="padding: 1.5rem;">
+                <h3 style="color: #28844b; font-size: 1.3rem; margin-bottom: 1rem;">Wick System</h3>
+                <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.5rem;">A passive system where a wick draws nutrient solution to feed plant roots. Perfect for small-scale growers.</p>
+                <div style="background: #fff3e0; padding: 0.75rem; border-radius: 8px; margin-top: 1rem;">
+                  <p style="margin: 0; font-size: 0.85rem; color: #e65100;"><strong>Best For:</strong> Herbs, small plants</p>
+                  <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #e65100;"><strong>Skill Level:</strong> Beginner</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Aeroponics System -->
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="250">
+            <div style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(114, 191, 120, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(114, 191, 120, 0.15)'">
+              <img src="{{ url_for('static', filename='img/aeroponic.jpg') }}" style="width: 100%; height: 200px; object-fit: cover;" alt="Aeroponics System">
+              <div style="padding: 1.5rem;">
+                <h3 style="color: #28844b; font-size: 1.3rem; margin-bottom: 1rem;">Aeroponics</h3>
+                <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.5rem;">Plants are suspended in the air, and roots are misted with nutrient solution. Rapid growth and efficient!</p>
+                <div style="background: #f3e5f5; padding: 0.75rem; border-radius: 8px; margin-top: 1rem;">
+                  <p style="margin: 0; font-size: 0.85rem; color: #6a1b9a;"><strong>Best For:</strong> All crops, high-tech</p>
+                  <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #6a1b9a;"><strong>Skill Level:</strong> Advanced</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Ebb and Flow System -->
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
+            <div style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(114, 191, 120, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(114, 191, 120, 0.15)'">
+              <img src="{{ url_for('static', filename='img/ebb.jpg') }}" style="width: 100%; height: 200px; object-fit: cover;" alt="Ebb and Flow System">
+              <div style="padding: 1.5rem;">
+                <h3 style="color: #28844b; font-size: 1.3rem; margin-bottom: 1rem;">Ebb and Flow (Flood and Drain)</h3>
+                <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.5rem;">The grow tray is periodically flooded then drained. Great for tomatoes and cucumbers.</p>
+                <div style="background: #e8f5e9; padding: 0.75rem; border-radius: 8px; margin-top: 1rem;">
+                  <p style="margin: 0; font-size: 0.85rem; color: #2e7d32;"><strong>Best For:</strong> Fruiting plants</p>
+                  <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #2e7d32;"><strong>Skill Level:</strong> Intermediate</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Kratky Method -->
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="350">
+            <div style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(114, 191, 120, 0.15); height: 100%; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 40px rgba(114, 191, 120, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(114, 191, 120, 0.15)'">
+              <img src="{{ url_for('static', filename='img/kratky.png') }}" style="width: 100%; height: 200px; object-fit: cover;" alt="Kratky Method">
+              <div style="padding: 1.5rem;">
+                <h3 style="color: #28844b; font-size: 1.3rem; margin-bottom: 1rem;">Kratky Method</h3>
+                <p style="color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.5rem;">A passive system with no electricity needed! Plants sit in shallow nutrient solution. Perfect for beginners.</p>
+                <div style="background: #fff9c4; padding: 0.75rem; border-radius: 8px; margin-top: 1rem;">
+                  <p style="margin: 0; font-size: 0.85rem; color: #f57f17;"><strong>Best For:</strong> Lettuce, herbs, no power</p>
+                  <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #f57f17;"><strong>Skill Level:</strong> Beginner ⭐</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <!-- System Comparison Guide -->
+        <div class="row mt-5">
+          <div class="col-12" data-aos="fade-up">
+            <div style="background: transparent; border: 2px solid rgba(114, 191, 120, 0.4); border-radius: 20px; padding: 3rem 2rem; box-shadow: 0 10px 30px rgba(114, 191, 120, 0.2);">
+              <div class="text-center mb-4">
+                <h3 style="color: var(--heading-color); font-size: 2rem; margin-bottom: 1rem; font-weight: 700;">Which System Should You Choose?</h3>
+                <p style="color: var(--default-color); font-size: 1.1rem; margin: 0;">Find the perfect hydroponic system based on your experience level</p>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <div style="background: rgba(114, 191, 120, 0.1); border: 2px solid rgba(114, 191, 120, 0.3); padding: 2rem 1.5rem; border-radius: 15px; height: 100%; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 25px rgba(114, 191, 120, 0.25)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                      <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                        <i class="bi bi-star-fill" style="font-size: 1.5rem; color: white;"></i>
+                      </div>
+                      <h4 style="color: var(--heading-color); font-size: 1.4rem; margin: 0; font-weight: 600;">Complete Beginner</h4>
+                    </div>
+                    <p style="color: var(--default-color); margin: 0 0 1rem 0; line-height: 1.7; font-size: 1rem;"><strong style="color: var(--heading-color);">Start with Kratky Method or DWC</strong></p>
+                    <p style="color: #666; margin: 0; line-height: 1.6; font-size: 0.95rem;">No pumps needed (Kratky) or simple setup (DWC). Low cost, easy to learn!</p>
+                  </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <div style="background: rgba(114, 191, 120, 0.1); border: 2px solid rgba(114, 191, 120, 0.3); padding: 2rem 1.5rem; border-radius: 15px; height: 100%; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 25px rgba(114, 191, 120, 0.25)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                      <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                        <i class="bi bi-graph-up-arrow" style="font-size: 1.5rem; color: white;"></i>
+                      </div>
+                      <h4 style="color: var(--heading-color); font-size: 1.4rem; margin: 0; font-weight: 600;">Some Experience</h4>
+                    </div>
+                    <p style="color: var(--default-color); margin: 0 0 1rem 0; line-height: 1.7; font-size: 1rem;"><strong style="color: var(--heading-color);">Try NFT or Ebb & Flow</strong></p>
+                    <p style="color: #666; margin: 0; line-height: 1.6; font-size: 0.95rem;">More control, better for leafy greens and fruiting plants. Scalable systems!</p>
+                  </div>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                  <div style="background: rgba(114, 191, 120, 0.1); border: 2px solid rgba(114, 191, 120, 0.3); padding: 2rem 1.5rem; border-radius: 15px; height: 100%; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 25px rgba(114, 191, 120, 0.25)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                      <div style="background: linear-gradient(135deg, #28844b, #a8cf45); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">
+                        <i class="bi bi-rocket-takeoff-fill" style="font-size: 1.5rem; color: white;"></i>
+                      </div>
+                      <h4 style="color: var(--heading-color); font-size: 1.4rem; margin: 0; font-weight: 600;">Advanced Grower</h4>
+                    </div>
+                    <p style="color: var(--default-color); margin: 0 0 1rem 0; line-height: 1.7; font-size: 1rem;"><strong style="color: var(--heading-color);">Go for Aeroponics</strong></p>
+                    <p style="color: #666; margin: 0; line-height: 1.6; font-size: 0.95rem;">Maximum efficiency and growth speed. Perfect for high-value crops!</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Hydroponic Systems Section -->
+
+    <!-- Services Section -->
+    <section id="services" class="services section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Your Journey from Zero to Growing</h2>
+        <p>Four simple steps: Learn, Connect, Grow, and Optimize—all with affordable tools</p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div class="service-item item-cyan position-relative">
+              <div class="icon">
+                <i class="bi bi-book-fill" style="font-size: 72px; color: #28844b;"></i>
+              </div>
+                <h3>Step 1: Start from Scratch</h3>
+              
+              <p><strong>Never tried hydroponics?</strong> Learn what it is, how it works, and how to build your first system. Complete beginner tutorials, videos, and guides—no prior knowledge required.</p>
+
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div class="service-item item-orange position-relative">
+              <div class="icon">
+                <i class="bi bi-people-fill" style="font-size: 72px; color: #a8cf45;"></i>
+              </div>
+                <h3>Step 2: Join the Community</h3>
+              
+              <p>Share knowledge with other farmers learning hydroponics. Ask questions in our forums, learn from others' experiences, and get 24/7 answers from our AI chatbot about nutrients, systems, and troubleshooting.</p>
+            </div>
+          </div><!-- End Service Item -->
+
+          <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div class="service-item item-teal position-relative">
+              <div class="icon">
+                <i class="bi bi-bar-chart-line-fill" style="font-size: 72px; color: #799928;"></i>
+              </div>
+                <h3>Step 3: Grow with Affordable AI</h3>
+              
+              <p><strong>No expensive equipment needed!</strong> Use simple handheld pH and EC meters (affordable for any farmer), enter your readings, and get professional AI-powered nutrient recommendations instantly.</p>
+            </div>
+          </div><!-- End Service Item -->
+
+        </div>
+
+      </div>
+
+    </section>
+    
+    
+    <section id="call-to-action" class="call-to-action section accent-background">
+
+      <div class="container">
+        <div class="row justify-content-center" data-aos="zoom-in" data-aos-delay="100">
+          <div class="col-xl-10">
+            <div class="text-center">
+              <h3>Ready to Try Hydroponics? No Experience Required!</h3>
+              <p>Join EzaSmart today—designed for complete beginners. Learn what hydroponics is, connect with other farmers, and manage your nutrients with affordable handheld meters + AI. Start your journey now!</p>
+              <a class="cta-btn" href="{{ url_for('login') }}">Join Free - Learn Today</a>
+              <a class="cta-btn" href="#hydroponic-systems">See Hydroponic Systems</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- /Call To Action Section -->
+
+    
+    <!-- Faq Section -->
+    <section id="faq" class="faq section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Frequently Asked Questions</h2>
+        <p>Everything you need to know to start your hydroponic farming journey</p>
+      </div><!-- End Section Title -->
+
+      <div class="container">
+
+        <div class="row justify-content-center">
+
+          <div class="col-lg-10" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="faq-container">
+              
+              <!-- FAQ 1 -->
+              <div class="faq-item faq-active">
+                <h3>I'm a complete beginner. Can I really learn hydroponics?</h3>
+                <div class="faq-content">
+                  <p><strong>Absolutely!</strong> EzaSmart is designed specifically for beginners. We teach you hydroponics from the ground up—no prior farming experience needed. Our platform includes step-by-step tutorials, video guides, and a supportive community. You'll learn what hydroponics is, how to set up your first system, and how to grow your first crops successfully.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <!-- FAQ 2 -->
+              <div class="faq-item">
+                <h3>What equipment do I need to start hydroponic farming?</h3>
+                <div class="faq-content">
+                  <p>For beginners, you'll need: <strong>1) A hydroponic system</strong> (we recommend starting with a simple DWC or NFT system), <strong>2) Growing containers or channels</strong>, <strong>3) Hydroponic nutrients</strong>, <strong>4) pH and EC meters</strong> for monitoring, <strong>5) Seeds or seedlings</strong>, and <strong>6) A water pump</strong>. Don't worry—our Resources section explains each item in detail and helps you choose affordable options!</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <!-- FAQ 3 -->
+              <div class="faq-item">
+                <h3>What is pH and EC? Why are they important?</h3>
+                <div class="faq-content">
+                  <p><strong>pH</strong> measures how acidic or alkaline your water is (scale 0-14). Plants need pH between 5.5-6.5 to absorb nutrients properly. <strong>EC (Electrical Conductivity)</strong> measures the concentration of nutrients in your water. Think of it as a "food meter"—too little and plants starve, too much and they get nutrient burn. Our AI tools help you understand and adjust these easily!</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <!-- FAQ 4 -->
+              <div class="faq-item">
+                <h3>How much does it cost to start hydroponic farming?</h3>
+                <div class="faq-content">
+                  <p>You can start small! A basic home system costs as little as <strong>$50-200</strong> for a beginner setup. This includes a simple DWC bucket system, nutrients, pH test kit, and seeds. Larger commercial setups cost more, but you can scale gradually. The beauty of hydroponics is you can start tiny and expand as you learn and earn!</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <!-- FAQ 5 -->
+              <div class="faq-item">
+                <h3>Which crops are easiest for beginners to grow?</h3>
+                <div class="faq-content">
+                  <p>We recommend starting with <strong>leafy greens like lettuce</strong>—they're forgiving, grow fast (4-6 weeks), and don't need much expertise. Other beginner-friendly crops include: basil, spinach, kale, and Swiss chard. Once you're comfortable, you can move to fruiting plants like tomatoes and peppers. Our platform provides specific guides for each crop!</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+              <!-- FAQ 6 -->
+              <div class="faq-item">
+                <h3>How does EzaSmart help me after I start growing?</h3>
+                <div class="faq-content">
+                  <p>Once you've set up your system and started growing, EzaSmart's <strong>AI-Powered Monitoring</strong> becomes your personal farming assistant. Simply enter your pH, EC, and temperature readings, and our AI tells you instantly if your plants are healthy or what needs adjustment. You'll also have access to our 24/7 chatbot for quick questions and our community forums for ongoing support!</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+              
+              <!-- FAQ 7 -->
+              <div class="faq-item">
+                <h3>Can I do hydroponics without electricity or with limited power?</h3>
+                <div class="faq-content">
+                  <p>Yes! Some hydroponic systems like <strong>Kratky method</strong> require no electricity at all—they're passive systems perfect for areas with unreliable power. For active systems that need pumps, you can use solar panels or timer switches to minimize electricity use. We teach various system types so you can choose what works best for your situation.</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+              
+              <!-- FAQ 8 -->
+              <div class="faq-item">
+                <h3>How long does it take to learn and see my first harvest?</h3>
+                <div class="faq-content">
+                  <p>You can learn the basics in <strong>1-2 weeks</strong> through our tutorials. Setting up your first system takes <strong>1-3 days</strong>. Then, for fast-growing crops like lettuce, you'll harvest in <strong>4-6 weeks</strong>! That means in about 2 months total, you can go from knowing nothing to harvesting your own hydroponically-grown vegetables. It's faster than you think!</p>
+                </div>
+                <i class="faq-toggle bi bi-chevron-right"></i>
+              </div><!-- End Faq item-->
+
+            </div>
+
+          </div><!-- End Faq Column-->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Faq Section -->
+
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Get in touch With Us</h2>
+        <p>We're here to help! Whether you have a question about EzaSmart, need assistance, or just want to share your thoughts, feel free to reach out.</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="mb-4" data-aos="fade-up" data-aos-delay="200">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13221.423438907037!2d30.153908776293683!3d-1.929952346098427!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x19dca77688d3131f%3A0x3a65f6d29a33c0d3!2sAfrican%20Leadership%20University!5e0!3m2!1sen!2srw!4v1728824628053!5m2!1sen!2srw" width="100%" height="270px" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div><!-- End Google Maps -->
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4">
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+              <i class="bi bi-geo-alt flex-shrink-0"></i>
+              <div>
+                <h3>Address</h3>
+                <p>Kigali, Rwanda</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+              <i class="bi bi-telephone flex-shrink-0"></i>
+              <div>
+                <h3>Call Us</h3>
+                <p>+250787244444</p>
+              </div>
+            </div><!-- End Info Item -->
+
+            <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+              <i class="bi bi-envelope flex-shrink-0"></i>
+              <div>
+                <h3>Email Us</h3>
+                <p>a.umutoniwa@aluschool.com</p>
+              </div>
+            </div><!-- End Info Item -->
+
+          </div>
+
+          <div class="col-lg-8">
+            <form method="POST" action="{{ url_for('send_contact_message') }}" class="php-email-form">
+
+              <div class="row gy-4">
+
+                <div class="col-md-6">
+                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                </div>
+
+                <div class="col-md-6 ">
+                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                </div>
+
+                <div class="col-md-12">
+                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                </div>
+
+                <div class="col-md-12">
+                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-green-500 text-white rounded-md hover:bg-blue-600 transition mt-4">Send Message</button>
+                  
+
+              </div>
+            </form>
+          </div><!-- End Contact Form -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <!-- Footer Section -->
+  <footer id="footer" class="footer light-background">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        
+        <!-- About EzaSmart -->
+        <div class="col-lg-5 col-md-12 footer-about">
+          <a href="{{ url_for('home') }}" class="logo d-flex align-items-center">
+            <span class="sitename">EzaSmart</span>
+          </a>
+          <p>EzaSmart empowers smallholder farmers by providing sustainable farming technologies, such as hydroponics and smart irrigation, that help increase yields, reduce water usage, and ensure food security across Africa.</p>
+          <div class="social-links d-flex mt-4">
+            <a href="https://twitter.com/EzaSmart"><i class="bi bi-twitter"></i></a>
+            <a href="https://facebook.com/EzaSmart"><i class="bi bi-facebook"></i></a>
+            <a href="https://instagram.com/EzaSmart"><i class="bi bi-instagram"></i></a>
+            <a href="https://linkedin.com/company/EzaSmart"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <!-- Useful Links -->
+        <div class="col-lg-2 col-6 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <!-- Services Section -->
+        <div class="col-lg-2 col-6 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#services">Hydroponic Systems</a></li>
+            <li><a href="#services">Farm Management Tools</a></li>
+            <li><a href="#services">Farmer Training</a></li>
+            <li><a href="#services">Support forums</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+          <h4>Contact Us</h4>
+          <p>KG 11 Ave</p>
+
+          <p>Kigali, Rwanda</p>
+
+          <p class="mt-4"><strong>Phone:</strong> <span>+250787244444</span></p>
+          <p><strong>Email:</strong> <span>a.umutoniwa@aluschool.com</span></p>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Copyright Section -->
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">EzaSmart</strong> <span>All Rights Reserved</span></p>
+    </div>
+
+  </footer>
+
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../static/vendor/php-email-form/validate.js"></script>
+  <script src="../static/vendor/aos/aos.js"></script>
+  <script src="../static/vendor/purecounter/purecounter_vanilla.js"></script>
+  <script src="../static/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../static/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="../static/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+  <script src="../static/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="../static/js/main.js"></script>
+
+  <!-- EzaSmart Hydroponics Chatbot -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+  <div id="chatbot-widget" class="chatbot-widget">
+    <button class="chatbot-toggle" aria-label="Open chat" title="Chat with EzaSmart AI Assistant">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="EzaSmart">
+    </button>
+    <div class="chatbot-panel">
+      <div class="chatbot-header">
+        <span>EzaSmart Assistant</span>
+        <button class="chatbot-close" aria-label="Close">×</button>
+      </div>
+      <div class="chatbot-messages"></div>
+      <div class="chatbot-input-area">
+        <textarea class="chatbot-input" placeholder="Ask about hydroponics..." rows="1"></textarea>
+        <button class="chatbot-send">Send</button>
+      </div>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>EzaSmart</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="assets/img/favicon.png" rel="icon">
+  <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link rel="icon" href="{{ url_for('static', filename='img/loader.png') }}" type="image/x-icon">
+
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../static/vendor2/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../static/vendor2/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../static/vendor2/aos/aos.css" rel="stylesheet">
+  <link href="../static/vendor2/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../static/vendor2/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{{ url_for('static', filename='css/hydroponic.css') }}" rel="stylesheet">
+  <link href="../static/css/hydroponic.css" rel="stylesheet">
+  
+  <style>
+    /* Smooth page transitions */
+    body {
+      animation: fadeIn 0.3s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    /* Decorative elements */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 20% 50%, rgba(114, 191, 120, 0.08) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(56, 127, 57, 0.08) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      33% {
+        transform: translate(30px, -30px) rotate(5deg);
+      }
+      66% {
+        transform: translate(-20px, 20px) rotate(-5deg);
+      }
+    }
+    
+    .page-transition-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    .page-transition-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    
+    .transition-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #e5e7eb;
+      border-top: 4px solid #22c55e;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body class="index-page">
+  <!-- Page Transition Overlay -->
+  <div class="page-transition-overlay" id="page-transition">
+    <div class="transition-spinner"></div>
+  </div>
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+      <a href="{{ url_for('home') }}" class="logo d-flex align-items-center me-auto">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="assets/img/logo.png" alt=""> -->
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo">
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <nav id="navmenu" class="navmenu">
+          <ul>
+            <!-- Home section (Hero) -->
+            <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
+            
+            <li><a href="{{ url_for('home') }}#about">About</a></li>
+            <li><a href="{{ url_for('home') }}#services">Services</a></li>  
+            <li><a href="#">Hydroponics</a></li>          
+            <li><a href="{{ url_for('home') }}#contact">Contact</a></li>
+          </ul>
+          <!-- Mobile menu toggle button -->
+          <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+        </nav>
+      </nav>
+      <a class="btn-getstarted" href="{{ url_for('login') }}">Get Started</a>
+    </div>
+  </header>
+
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section dark-background">
+
+      <img src="{{ url_for('static', filename='img/hydroponic.webp') }}" alt="" data-aos="fade-in">
+
+      <div class="container">
+        <h2 data-aos="fade-up" data-aos-delay="100">The What and Why of Hydroponic Farming</h2>
+        <p data-aos="fade-up" data-aos-delay="200">A revolutionary, soil-free farming method designed to grow more with less.</p>
+
+      </div>
+
+    </section><!-- /Hero Section -->
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-up" data-aos-delay="100">
+            <img src="{{ url_for('static', filename='img/what-is-hydroponic.jpg') }}" class="img-fluid" alt="">
+          </div>
+
+          <div class="col-lg-6 order-2 order-lg-1 content" data-aos="fade-up" data-aos-delay="200">
+            <h3>What is Hydroponic Farming?</h3>
+            <p class="fst-italic">
+              Hydroponic farming is an innovative method of growing plants without soil, using nutrient-rich water solutions instead. By supplying plants directly with essential nutrients, this method enables faster growth and higher yields compared to traditional farming. It’s a highly efficient, sustainable solution, allowing crops to thrive in controlled environments, conserve water, and adapt to spaces where soil may not be available, making it ideal for urban and arid areas alike.
+
+            </p>
+           
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /About Section -->
+
+    <section id="about" class="about section">
+
+      <div class="container">
+
+        <div class="row gy-4">
+          <div class="col-lg-6 order-2 order-lg-2 content" data-aos="fade-up" data-aos-delay="200">
+            <h3>What You need for Hydroponic Farming.</h3>
+            <ul>
+              <li><i class="bi bi-check-circle"></i> <span>Water: Use fresh, filtered water with a neutral pH (around 6–6.5) to keep your plants healthy.</span></li>
+              <li><i class="bi bi-check-circle"></i> <span>Oxygen: Ensure roots get enough air—leave a gap between the plant base and water, or use an air pump to add bubbles.</span></li>
+              <li><i class="bi bi-check-circle"></i> <span>Root Support: Give roots something to cling to, like coconut fiber or rockwool. Avoid materials that compact or don’t hold moisture.</span></li>
+              <li><i class="bi bi-check-circle"></i> <span>Nutrients: Add essential nutrients directly to the water, like magnesium and calcium, since there’s no soil to provide them.</span></li>
+              <li><i class="bi bi-check-circle"></i> <span>Light: For indoor setups, use grow lights to meet each plant’s specific light needs.</span></li>
+
+            
+            </ul>
+          </div>
+          <div class="col-lg-6 order-1 order-lg-1" data-aos="fade-up" data-aos-delay="100">
+            <img src="{{ url_for('static', filename='img/what-you-need-hydroponic.webp') }}" class="img-fluid" alt="">
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /About Section -->
+
+
+    <!-- Why Us Section -->
+    <section id="why-us" class="section why-us">
+
+      <div class="container">
+
+        <div class="row gy-4">
+
+          <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="why-box">
+              <h3>Why Grow Without Soil??</h3>
+              <p>
+                Hydroponic farming offers an innovative way to grow plants in nutrient-rich water rather than soil. This approach maximizes growth potential, making it possible to cultivate fresh produce anywhere, from small indoor spaces to urban rooftops. By using less water and fewer resources, hydroponic farming is a sustainable solution to modern agricultural challenges.
+              </p>
+              
+            </div>
+          </div><!-- End Why Box -->
+
+          <div class="col-lg-8 d-flex align-items-stretch">
+            <div class="row gy-4" data-aos="fade-up" data-aos-delay="200">
+
+              <div class="col-xl-4">
+                <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                  <i class="bi bi-clipboard-data"></i>
+                  <h4>Grow Anywhere, Anytime</h4>
+                  <p>
+                    Hydroponics allows you to grow plants in any environment, from urban areas to places with limited arable land, providing fresh produce no matter the location. With controlled conditions, you can also grow year-round, independent of seasons or weather conditions.
+                  </p>
+                </div>
+              </div><!-- End Icon Box -->
+              
+
+              <div class="col-xl-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                  <i class="bi bi-gem"></i>
+                  <h4>Higher Yields</h4>
+                  <p>
+                    With carefully controlled nutrients and conditions, hydroponic systems often yield more produce per square foot than traditional farming methods.
+                  </p>                
+                </div>
+              </div><!-- End Icon Box -->
+
+              <div class="col-xl-4" data-aos="fade-up" data-aos-delay="400">
+                <div class="icon-box d-flex flex-column justify-content-center align-items-center">
+                  <i class="bi bi-inboxes"></i>
+                  <h4>Fewer Resources</h4>
+                  <p>
+                    Hydroponics uses up to 90% less water than soil-based farming, and minimizes the need for fertilizers, making it an eco-friendly choice.
+                  </p>
+                </div>
+              </div><!-- End Icon Box -->
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Why Us Section -->
+
+    
+
+    <!-- Hydroponic Systems Section -->
+<section id="hydroponic-systems" class="courses section">
+
+  <!-- Section Title -->
+  <div class="container section-title" data-aos="fade-up">
+    <h2>Hydroponic Systems</h2>
+    <p>Different Hydroponic Technologies</p>
+  </div><!-- End Section Title -->
+
+  <div class="container">
+
+    <div class="row">
+
+      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="course-item">
+          <img src="{{ url_for('static', filename='img/nft.jpg') }}" class="img-fluid" alt="NFT System">
+          <div class="course-content">
+            <h3>Nutrient Film Technique (NFT)</h3>
+            <p class="description">A thin film of nutrient-rich water flows over the plant roots, ideal for fast-growing crops like lettuce and herbs.</p>
+          </div>
+        </div>
+      </div> <!-- End NFT System-->
+
+      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="course-item">
+          <img src="{{ url_for('static', filename='img/dwc.jpg') }}" class="img-fluid" alt="DWC System">
+          <div class="course-content">
+            <h3>Deep Water Culture (DWC)</h3>
+            <p class="description">Plants are suspended in nutrient-rich water, providing them with constant nutrients and oxygen, ideal for leafy greens.</p>
+          </div>
+        </div>
+      </div> <!-- End DWC System-->
+
+      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="course-item">
+          <img src="{{ url_for('static', filename='img/Wick-System.jpg') }}" class="img-fluid" alt="Wick System">
+          <div class="course-content">
+            <h3>Wick System</h3>
+            <p class="description">A passive system where a wick draws nutrient solution to feed plant roots, great for small-scale growers.</p>
+          </div>
+        </div>
+      </div> <!-- End Wick System-->
+
+      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="course-item">
+          <img src="{{ url_for('static', filename='img/aeroponic.jpg') }}" class="img-fluid" alt="Aeroponics System">
+          <div class="course-content">
+            <h3>Aeroponics</h3>
+            <p class="description">Plants are suspended in the air, and their roots are misted with a fine spray of nutrient solution, offering rapid growth and efficient resource use.</p>
+          </div>
+        </div>
+      </div> <!-- End Aeroponics System-->
+
+      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="course-item">
+          <img src="{{ url_for('static', filename='img/ebb.jpg') }}" class="img-fluid" alt="Ebb and Flow System">
+          <div class="course-content">
+            <h3>Ebb and Flow (Flood and Drain)</h3>
+            <p class="description">The grow tray is periodically flooded with nutrient solution and then drained, great for plants like tomatoes and cucumbers.</p>
+          </div>
+        </div>
+      </div> <!-- End Ebb and Flow System-->
+
+      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="course-item">
+          <img src="{{ url_for('static', filename='img/kratky.png') }}" class="img-fluid" alt="Kratky Method">
+          <div class="course-content">
+            <h3>Kratky Method</h3>
+            <p class="description">A passive system where plants sit in a shallow pool of nutrient solution, ideal for beginners and small-scale growers.</p>
+          </div>
+        </div>
+      </div> <!-- End Kratky Method-->
+
+      <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+        <div class="course-item">
+          <img src="{{ url_for('static', filename='img/vertical.jpg') }}" class="img-fluid" alt="Vertical Farming System">
+          <div class="course-content">
+            <h3>Vertical Farming Systems</h3>
+            <p class="description">Stacking growing levels vertically to maximize space and increase yield, often used with other hydroponic systems.</p>
+          </div>
+        </div>
+      </div> <!-- End Vertical Farming System-->
+      
+    </div>
+
+  </div>
+
+</section><!-- /Hydroponic Systems Section -->
+
+
+  </main>
+
+  <footer id="footer" class="footer position-relative light-background">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        
+        <!-- About EzaSmart -->
+        <div class="col-lg-3 col-md-6 footer-about">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <span class="sitename">EzaSmart</span>
+          </a>
+          <p>EzaSmart empowers smallholder farmers by providing sustainable farming technologies, such as hydroponics and smart irrigation, that help increase yields, reduce water usage, and ensure food security across Africa.</p>
+          <div class="social-links d-flex mt-4">
+            <a href="https://twitter.com/EzaSmart"><i class="bi bi-twitter"></i></a>
+            <a href="https://facebook.com/EzaSmart"><i class="bi bi-facebook"></i></a>
+            <a href="https://instagram.com/EzaSmart"><i class="bi bi-instagram"></i></a>
+            <a href="https://linkedin.com/company/EzaSmart"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <!-- Useful Links -->
+        <div class="col-lg-2 col-6 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('home') }}#about">About Us</a></li>
+            <li><a href="{{ url_for('home') }}#services">Services</a></li>
+            <li><a href="{{ url_for('home') }}#faq">FAQ</a></li>
+          </ul>
+        </div>
+
+        <!-- Services Section -->
+        <div class="col-lg-2 col-6 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="{{ url_for('home') }}#hydroponic-systems">Hydroponic Systems</a></li>
+            <li><a href="{{ url_for('home') }}">Farm Management Tools</a></li>
+            <li><a href="{{ url_for('home') }}">Farmer Training</a></li>
+            <li><a href="{{ url_for('home') }}">Support forums</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="col-lg-3 col-md-12 footer-contact text-center text-md-start">
+          <h4>Contact Us</h4>
+          <p>KG 11 Ave</p>
+
+          <p>Kigali, Rwanda</p>
+
+          <p class="mt-4"><strong>Phone:</strong> <span>+250787244444</span></p>
+          <p><strong>Email:</strong> <span>a.umutoniwa@aluschool.com</span></p>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Copyright Section -->
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">EzaSmart</strong> <span>All Rights Reserved</span></p>
+    </div>
+
+  </footer>
+
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="../static/vendor2/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../static/vendor2/php-email-form/validate.js"></script>
+  <script src="../static/vendor2/aos/aos.js"></script>
+  <script src="../static/vendor2/glightbox/js/glightbox.min.js"></script>
+  <script src="../static/vendor2/purecounter/purecounter_vanilla.js"></script>
+  <script src="../static/vendor2/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="{{ url_for('static', filename='js/hydroponic.js') }}"></script>
+  <script src="../static/js/hydroponic.js"></script>
+
+  <!-- EzaSmart Hydroponics Chatbot -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+  <div id="chatbot-widget" class="chatbot-widget">
+    <button class="chatbot-toggle" aria-label="Open chat" title="Chat with EzaSmart AI Assistant">
+      <img src="{{ url_for('static', filename='img/logo.png') }}" alt="EzaSmart">
+    </button>
+    <div class="chatbot-panel">
+      <div class="chatbot-header">
+        <span>EzaSmart Assistant</span>
+        <button class="chatbot-close" aria-label="Close">×</button>
+      </div>
+      <div class="chatbot-messages"></div>
+      <div class="chatbot-input-area">
+        <textarea class="chatbot-input" placeholder="Ask about hydroponics..." rows="1"></textarea>
+        <button class="chatbot-send">Send</button>
+      </div>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+
+  <!-- Page Transition Script -->
+  <script>
+    // Smooth page transitions
+    document.addEventListener('DOMContentLoaded', function() {
+      const transitionOverlay = document.getElementById('page-transition');
+      
+      // Fade out overlay on page load
+      setTimeout(() => {
+        transitionOverlay.classList.remove('active');
+      }, 100);
+      
+      // Add smooth transition to all navigation links
+      const links = document.querySelectorAll('a:not([target="_blank"]):not([href^="#"]):not(.no-transition)');
+      
+      links.forEach(link => {
+        link.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          
+          // Skip if it's a javascript link or external
+          if (!href || href === '#' || href.startsWith('javascript:') || 
+              this.hostname !== window.location.hostname) {
+            return;
+          }
+          
+          e.preventDefault();
+          
+          // Show transition overlay
+          transitionOverlay.classList.add('active');
+          
+          // Navigate after a brief delay
+          setTimeout(() => {
+            window.location.href = href;
+          }, 300);
+        });
+      });
+      
+      // Handle browser back/forward buttons
+      window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+          transitionOverlay.classList.remove('active');
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
