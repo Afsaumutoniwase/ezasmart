@@ -13,6 +13,9 @@ import joblib
 import numpy as np
 import json
 import secrets
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__, static_folder='static')
 app.config['SECRET_KEY'] = 'eza smart'
@@ -23,20 +26,20 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Flask-Mail configuration
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'udemycourses174@gmail.com'
-app.config['MAIL_PASSWORD'] = 'rznn ssbj rtjj ztfe'
-app.config['MAIL_DEFAULT_SENDER'] = 'udemycourses174@gmail.com'
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', '587'))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
+app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'False').lower() in ('true', '1', 'yes')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])
+app.config['MAIL_SUPPORT_RECIPIENT'] = os.getenv('MAIL_SUPPORT_RECIPIENT', app.config['MAIL_USERNAME'])
 
 db = SQLAlchemy(app)
 mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
-my_email = "udemycourses174@gmail.com"  
-password = "rznn ssbj rtjj ztfe"    
 
 # Load sensor monitoring model
 SENSOR_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'Models', 'ai_nutrient_analysis')
@@ -584,12 +587,13 @@ def send_support():
 
     try:
         # Sending the email
-        with smtplib.SMTP("smtp.gmail.com", 587) as connection:
-            connection.starttls()
-            connection.login(user=my_email, password=password)
+        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as connection:
+            if app.config['MAIL_USE_TLS']:
+                connection.starttls()
+            connection.login(user=app.config['MAIL_USERNAME'], password=app.config['MAIL_PASSWORD'])
             connection.sendmail(
-                from_addr=my_email,
-                to_addrs=my_email,  # Sending to your inbox
+                from_addr=app.config['MAIL_DEFAULT_SENDER'],
+                to_addrs=app.config['MAIL_SUPPORT_RECIPIENT'],
                 msg=full_message
             )
         flash('Your message has been sent successfully. Our team will get back to you shortly.', 'success')
@@ -617,12 +621,13 @@ def send_contact_message():
 
     try:
         # Sending the email
-        with smtplib.SMTP("smtp.gmail.com", 587) as connection:
-            connection.starttls()
-            connection.login(user=my_email, password=password)
+        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as connection:
+            if app.config['MAIL_USE_TLS']:
+                connection.starttls()
+            connection.login(user=app.config['MAIL_USERNAME'], password=app.config['MAIL_PASSWORD'])
             connection.sendmail(
-                from_addr=my_email,
-                to_addrs=my_email,  # Sending to your inbox
+                from_addr=app.config['MAIL_DEFAULT_SENDER'],
+                to_addrs=app.config['MAIL_SUPPORT_RECIPIENT'],
                 msg=f"Subject:{subject}\n\n{full_message}"
             )
         flash('Your message has been sent successfully. Our team will get back to you shortly.', 'success')

@@ -33,3 +33,5 @@ Models/trained_chatbot_model/model.safetensors
 Models/Growmate/
 # Node modules (if any)
 node_modules/
+
+.env
