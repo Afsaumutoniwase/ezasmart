@@ -4,7 +4,7 @@ SQLAlchemy==2.0.25
 flask_login==0.6.3
 flask_mail==0.9.1
 werkzeug==3.0.1
-gunicorn==20.1.0
+gunicorn>=23.0.0
 transformers>=4.30.0
 torch>=2.0.0
 accelerate>=0.20.0
