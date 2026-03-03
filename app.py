@@ -314,17 +314,27 @@ def login():
             # Assign an avatar based on gender
             avatar_name = assign_avatar(gender)
 
-            # Register new user
-            new_user = User(username=username, email=email, role=role, gender=gender, profile_image_url=avatar_name)
-            new_user.set_password(password)
-            db.session.add(new_user)
-            db.session.commit()
-            
-            # Send welcome email
-            send_welcome_email(new_user)
-            
-            flash('Registration successful! Please check your email for confirmation.')
-            return redirect(url_for('login'))
+            try:
+                # Register new user
+                new_user = User(username=username, email=email, role=role, gender=gender, profile_image_url=avatar_name)
+                new_user.set_password(password)
+                db.session.add(new_user)
+                db.session.commit()
+                
+                # Send welcome email (non-blocking - don't fail signup if email fails)
+                try:
+                    send_welcome_email(new_user)
+                except Exception as e:
+                    print(f"Warning: Failed to send welcome email: {e}")
+                    # Continue anyway - user is registered
+                
+                flash('Registration successful! Please check your email for confirmation.')
+                return redirect(url_for('login'))
+            except Exception as e:
+                db.session.rollback()
+                print(f"Registration error: {e}")
+                flash('An error occurred during registration. Please try again.', 'error')
+                return redirect(url_for('login') + '#register-form')
 
         elif request.form.get('form_type') == 'login':
             user = User.query.filter_by(email=request.form['email']).first()
@@ -552,16 +562,29 @@ def help():
 def chat():
     """EzaSmart Hydroponics Explainer Chatbot - answers questions about hydroponics."""
     try:
-        from chatbot import get_chatbot
         data = request.get_json() or {}
         message = data.get('message', '').strip()
         if not message:
             return jsonify({'response': 'Please ask a question about hydroponics!'}), 400
-        chatbot = get_chatbot()
-        response = chatbot.chat(message)
-        return jsonify({'response': response})
+        
+        try:
+            from chatbot import get_chatbot
+            chatbot = get_chatbot()
+            response = chatbot.chat(message)
+            return jsonify({'response': response})
+        except ImportError as ie:
+            print(f"Chatbot import error: {ie}")
+            return jsonify({
+                'response': 'Chatbot is currently unavailable. Please try again later or visit our resources page for answers.'
+            }), 503
+        except Exception as e:
+            print(f"Chatbot error: {e}")
+            return jsonify({
+                'response': f'The chatbot encountered an error: {str(e)[:100]}. Please try again or check your question.'
+            }), 500
     except Exception as e:
-        return jsonify({'response': f'Sorry, something went wrong. Please try again. ({str(e)})'}), 500
+        print(f"Chat API error: {e}")
+        return jsonify({'response': 'An error occurred processing your request.'}), 500
 
 @app.route('/resources')
 def resources():   
@@ -732,10 +755,16 @@ def logout():
     return redirect(url_for('login'))
 
 
-if __name__ == '__main__':
-    # Initialize database
-    with app.app_context():
-        db.create_all()  # This will create tables if they don't exist
-        create_default_categories()
+# Initialize database on app startup (called by gunicorn on Render)
+with app.app_context():
+    try:
+        print("Initializing database...")
+        db.create_all()  # Creates tables if they don't exist
+        create_default_categories()  # Adds default forum categories
+        print("✓ Database initialized successfully")
+    except Exception as e:
+        print(f"⚠ Warning: Database initialization error: {e}")
 
+
+if __name__ == '__main__':
     app.run(debug=True)
