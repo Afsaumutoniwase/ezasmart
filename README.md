@@ -1,120 +1,64 @@
 # EzaSmart
 
-**Empowering Farmers with Sustainable Hydroponic Solutions**
+Minimal Flask platform for hydroponics support, monitoring, learning resources, and an AI chatbot.
 
-EzaSmart (made by Afsa Umutoniwase) is a platform dedicated to revolutionizing agriculture in Africa by providing smallholder farmers with innovative hydroponic farming solutions. By leveraging cutting-edge technology, we aim to enhance sustainability, optimize resource use, and improve livelihoods.
+## Quick Start
 
----
+```bash
+python -m venv .venv
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python app.py
+```
 
-## Table of Contents
+Open: `http://127.0.0.1:5000`
 
-1. [Overview](#overview)  
-2. [Key Features](#key-features)  
-3. [Technologies Used](#technologies-used)  
-4. [Setup and Installation](#setup-and-installation)  
-5. [Usage](#usage)  
-6. [Contributing](#contributing)  
----
+## Configuration
 
-## Overview
+Create a `.env` file for mail/password reset features.
 
-EzaSmart empowers farmers with tools and insights to embrace hydroponic farming, increasing productivity and sustainability while reducing water usage by 50%. The platform supports resource-constrained farmers with a focus on education, community engagement, and data-driven decision-making.
+```env
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=True
+MAIL_USE_SSL=False
+MAIL_USERNAME=your_email
+MAIL_PASSWORD=your_password
+MAIL_DEFAULT_SENDER=your_email
+MAIL_SUPPORT_RECIPIENT=your_email
+```
 
----
+## Project Layout
 
-## Key Features
+- `app.py` — main Flask app (routes, auth, DB models, AI integration).
+- `chatbot.py` — standalone EzaSmart RAG chatbot loader/inference helper.
+- `requirements.txt` — Python dependencies.
+- `pytest.ini` — pytest settings.
+- `runtime.txt` — runtime pin for deployment.
+- `instance/` — local runtime data (SQLite DB and instance files).
+- `Models/` — AI assets, training notebooks, datasets, and model artifacts:
+  - `ai_nutrient_analysis/` — nutrient prediction training notebook + metadata.
+  - `chatbot/` — chatbot model artifacts + metadata.
+  - `Growmate/` — tokenizer/model config files.
+  - `Kaggle data/` — raw/cleaned datasets.
+  - `scrape_*.py` + `*_knowledge.json` + `*_qa_data.json` — knowledge/data builders.
+- `static/` — frontend assets:
+  - `css/` — page styles.
+  - `js/` — client scripts.
+  - `img/` — uploaded/static images.
+  - `vendor/`, `vendor2/` — third-party frontend libraries.
+- `templates/` — Jinja2 HTML views/pages and shared UI blocks.
+- `tests/` — API/auth/model/route test suite and test fixtures.
+- `__pycache__/` — Python bytecode cache.
 
-### Hydroponic Monitoring
-- Track water and nutrient levels in real-time.
-- Receive alerts for optimized crop growth.
+## Tests
 
-### Community Support Forums
-- Engage in farmer-to-farmer knowledge sharing.
-- Access expert guidance and solutions to farming challenges.
+```bash
+pytest -q
+```
 
-### Analytics Dashboard
-- Gain insights into farm performance and efficiency.
+## Notes
 
-### Training & Resources
-- Tutorials on hydroponic farming techniques.  
----
-
-## Technologies Used
-
-EzaSmart uses modern tools and frameworks for an efficient and user-friendly experience:  
-
-- **Frontend:** Tailwind CSS, JavaScript, HTML5  
-- **Backend:** Python (Flask Framework)  
-- **Database:** SQLite  
-- **APIs:** RESTful APIs for data integration  
-
----
-
-## Setup and Installation
-
-To set up EzaSmart locally, follow these steps:  
-
-1. **Clone the repository:**  
-   ```bash
-   git clone https://github.com/Afsaumutoniwase/EzaSmart.git
-   ```  
-
-2. **Navigate to the project directory:**  
-   ```bash
-   cd EzaSmart
-   ```  
-
-3. **Create a virtual environment:**  
-   ```bash
-   python -m venv env
-   source env/bin/activate  # On Windows: env\Scripts\activate
-   ```  
-
-4. **Install required dependencies:**  
-   ```bash
-   pip install -r requirements.txt
-   ```  
-
-5. **Run database migrations (if applicable):**  
-   ```bash
-   flask db upgrade
-   ```  
-
-6. **Start the application:**  
-   ```bash
-   flask run
-   ```  
-
-7. **Open the application:**  
-   Visit `http://127.0.0.1:5000` in your browser.  
-
----
-
-## Usage
-
-- **Farmers:** Monitor farm performance, access hydroponic systems, and join the community.  
-- **Vendors (who are also farmers):** List hydroponic supplies and connect with fellow farmers.  
-- **Experts:** Offer guidance and solutions to the farming community.  
-
----
-
-## Contributing
-
-We welcome contributions to EzaSmart! Here's how you can contribute:  
-
-1. Fork this repository.  
-2. Create a new branch for your feature or bug fix:  
-   ```bash
-   git checkout -b feature-name
-   ```  
-3. Make your changes and commit them:  
-   ```bash
-   git commit -m "Description of changes"
-   ```  
-4. Push your changes to the branch:  
-   ```bash
-   git push origin feature-name
-   ```  
-5. Create a pull request to the `main` branch of this repository.  
-
----
+- Default database is SQLite (`sqlite:///database.db`).
+- Some AI model files are large and loaded from `Models/` at runtime.
