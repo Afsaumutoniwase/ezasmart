@@ -103,44 +103,11 @@ function showSensorPrediction(data) {
     const predictionDiv = document.getElementById('sensor-prediction');
     const contentDiv = document.getElementById('sensor-prediction-content');
     
-    // Format action with appropriate icon
-    let actionIcon = '✓';
-    if (data.action === 'Add_pH_Up') actionIcon = '⬆️';
-    else if (data.action === 'Add_pH_Down') actionIcon = '⬇️';
-    else if (data.action === 'Add_Nutrients') actionIcon = '🌱';
-    else if (data.action === 'Dilute') actionIcon = '💧';
-    else if (data.action === 'Maintain') actionIcon = '✅';
-    
     // Build HTML content
     const html = `
         <div class="space-y-4">
-            <div class="flex items-center space-x-3">
-                <span class="text-3xl">${actionIcon}</span>
-                <div>
-                    <h4 class="text-xl font-bold text-[#28844b]">${data.action.replace(/_/g, ' ')}</h4>
-                    <p class="text-sm text-gray-500">Confidence: ${data.confidence}%</p>
-                </div>
-            </div>
-            
             <div class="border-t border-gray-200 pt-4">
-                <p class="text-gray-700 leading-relaxed mb-4">${data.description}</p>
-                
-                <div class="bg-white border border-gray-200 rounded-md p-4">
-                    <h5 class="font-semibold text-gray-800 mb-2">Your Sensor Readings:</h5>
-                    <div class="grid grid-cols-2 gap-2 text-sm">
-                        <div class="text-gray-600">Crop:</div>
-                        <div class="font-semibold">${data.inputs.crop}</div>
-                        
-                        <div class="text-gray-600">pH Level:</div>
-                        <div class="font-semibold">${data.inputs.pH}</div>
-                        
-                        <div class="text-gray-600">EC Value:</div>
-                        <div class="font-semibold">${data.inputs.EC} mS/cm</div>
-                        
-                        <div class="text-gray-600">Temperature:</div>
-                        <div class="font-semibold">${data.inputs.Temperature}°C</div>
-                    </div>
-                </div>
+                <p class="text-gray-700 leading-relaxed">${data.description}</p>
             </div>
         </div>
     `;

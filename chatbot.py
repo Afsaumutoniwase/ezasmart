@@ -24,22 +24,26 @@ class EzaSmartChatbot:
         self.tokenizer = None
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.threshold = 0.4
+        self.model_loaded = False
         self._load_system()
     
     def _load_system(self):
-        """Load the RAG system components."""
+        """Load the RAG system components with fallback support."""
         try:
             print("Loading EzaSmart RAG Chatbot...")
             
             # Load TF-IDF vectorizer
+            print("  • Loading TF-IDF vectorizer...")
             with open(self.rag_dir / "tfidf_vectorizer.pkl", "rb") as f:
                 self.vectorizer = pickle.load(f)
             
             # Load TF-IDF matrix
+            print("  • Loading TF-IDF matrix...")
             with open(self.rag_dir / "tfidf_matrix.pkl", "rb") as f:
                 self.tfidf_matrix = pickle.load(f)
             
             # Load knowledge base
+            print("  • Loading knowledge base...")
             with open(self.rag_dir / "knowledge_base.pkl", "rb") as f:
                 kb = pickle.load(f)
                 self.questions = kb['questions']
@@ -47,28 +51,54 @@ class EzaSmartChatbot:
                 self.sources = kb['sources']
             
             # Load metadata
+            print("  • Loading metadata...")
             with open(self.rag_dir / "metadata.json", "r", encoding="utf-8") as f:
                 self.metadata = json.load(f)
             
-            # Load T5 model
-            model_name = self.metadata.get('model_name', 'Afsa20/Farmsmart_Growmate')
-            self.tokenizer = T5Tokenizer.from_pretrained(model_name)
-            self.model = T5ForConditionalGeneration.from_pretrained(
-                model_name,
-                torch_dtype=torch.float16 if self.device.type == 'cuda' else torch.float32,
-                device_map="auto" if self.device.type == 'cuda' else None
-            )
+            print(f"✓ Knowledge base loaded: {self.metadata['total_pairs']} Q&A pairs")
             
-            if self.device.type == 'cpu':
-                self.model = self.model.to(self.device)
+            # Try to load T5 model (optional - fallback to retrieval-only if fails)
+            try:
+                print("  • Loading T5 model (this may take a minute on first load)...")
+                model_name = self.metadata.get('model_name', 'Afsa20/Farmsmart_Growmate')
+                
+                self.tokenizer = T5Tokenizer.from_pretrained(model_name)
+                print("    ✓ Tokenizer loaded")
+                
+                self.model = T5ForConditionalGeneration.from_pretrained(
+                    model_name,
+                    torch_dtype=torch.float16 if self.device.type == 'cuda' else torch.float32,
+                    device_map="auto" if self.device.type == 'cuda' else None
+                )
+                print("    ✓ Model weights loaded")
+                
+                if self.device.type == 'cpu':
+                    self.model = self.model.to(self.device)
+                
+                self.model.eval()
+                self.model_loaded = True
+                print(f"✓ T5 model ready on {self.device}")
+                
+            except RuntimeError as re:
+                if "out of memory" in str(re).lower():
+                    print(f"⚠ T5 Model load failed: OUT OF MEMORY")
+                    print(f"  Available CUDA memory is insufficient. Using retrieval-only mode.")
+                else:
+                    print(f"⚠ T5 Model load failed: {re}")
+                print("⚠ Running in retrieval-only mode (knowledge base answers only)")
+                self.model_loaded = False
+                
+            except Exception as model_error:
+                print(f"⚠ T5 Model load failed: {model_error}")
+                print("⚠ Running in retrieval-only mode (knowledge base answers only)")
+                self.model_loaded = False
             
-            self.model.eval()
-            
-            print(f"✓ RAG system loaded: {self.metadata['total_pairs']} Q&A pairs")
-            print(f"✓ Device: {self.device}")
+            print("✓ EzaSmart Chatbot ready!")
             
         except Exception as e:
-            print(f"Error loading RAG system: {e}")
+            print(f"✗ Critical error loading RAG system: {e}")
+            import traceback
+            traceback.print_exc()
             raise
     
     def _retrieve_answers(self, query, top_k=3):
@@ -113,6 +143,7 @@ class EzaSmartChatbot:
         """
         Main chat interface - hybrid RAG approach.
         Returns answer using retrieval if confidence is high, otherwise generates.
+        Falls back to retrieval-only if T5 model not loaded.
         """
         if not question or not question.strip():
             return "Please ask a question about hydroponics!"
@@ -124,9 +155,23 @@ class EzaSmartChatbot:
         if results and results[0]['score'] >= self.threshold:
             best = results[0]
             return best['answer']
+        elif self.model_loaded:
+            # Generate new answer with T5 if model is available
+            try:
+                return self._generate_answer(question)
+            except Exception as e:
+                print(f"Generation error: {e}")
+                # Fallback to best retrieval result
+                if results and results[0]['score'] > 0.2:
+                    return results[0]['answer']
+                else:
+                    return "I don't have enough information to answer that question. Try asking about pH, EC, nutrients, or specific crops."
         else:
-            # Generate new answer with T5
-            return self._generate_answer(question)
+            # Model not loaded - use best retrieval result with disclaimer
+            if results and results[0]['score'] > 0.2:
+                return results[0]['answer']
+            else:
+                return "I don't have enough information to answer that specific question. Please try asking about:\n• pH and EC management\n• Nutrient solutions\n• Specific crops (lettuce, tomatoes, peppers)\n• System setup and troubleshooting"
 
 # Singleton instance
 _chatbot_instance = None

@@ -11,6 +11,7 @@ from flask_mail import Mail, Message
 import os
 import joblib
 import numpy as np
+import pandas as pd
 import json
 import secrets
 from dotenv import load_dotenv
@@ -48,6 +49,35 @@ feature_scaler = None
 crop_encoder = None
 action_encoder = None
 sensor_metadata = None
+
+# Crop-specific optimal ranges for EC (mS/cm) and pH levels
+CROP_OPTIMAL_RANGES = {
+    'African Violet': {'ec_min': 1.2, 'ec_max': 1.5, 'ph_min': 6.0, 'ph_max': 7.0},
+    'Basil': {'ec_min': 1.0, 'ec_max': 1.6, 'ph_min': 5.5, 'ph_max': 6.0},
+    'Bean': {'ec_min': 2.0, 'ec_max': 4.0, 'ph_min': 6.0, 'ph_max': 6.0},
+    'Banana': {'ec_min': 1.8, 'ec_max': 2.2, 'ph_min': 5.5, 'ph_max': 6.5},
+    'Broccoli': {'ec_min': 2.8, 'ec_max': 3.5, 'ph_min': 6.0, 'ph_max': 6.8},
+    'Cabbage': {'ec_min': 2.5, 'ec_max': 3.0, 'ph_min': 6.5, 'ph_max': 7.0},
+    'Celery': {'ec_min': 1.8, 'ec_max': 2.4, 'ph_min': 6.5, 'ph_max': 6.5},
+    'Carnation': {'ec_min': 2.0, 'ec_max': 3.5, 'ph_min': 6.0, 'ph_max': 6.0},
+    'Courgettes': {'ec_min': 1.8, 'ec_max': 2.4, 'ph_min': 6.0, 'ph_max': 6.0},
+    'Cucumber': {'ec_min': 1.7, 'ec_max': 2.0, 'ph_min': 5.0, 'ph_max': 5.5},
+    'Eggplant': {'ec_min': 2.5, 'ec_max': 3.5, 'ph_min': 6.0, 'ph_max': 6.0},
+    'Ficus': {'ec_min': 1.6, 'ec_max': 2.4, 'ph_min': 5.5, 'ph_max': 6.0},
+    'Leek': {'ec_min': 1.4, 'ec_max': 1.8, 'ph_min': 6.5, 'ph_max': 7.0},
+    'Lettuce': {'ec_min': 1.2, 'ec_max': 1.8, 'ph_min': 6.0, 'ph_max': 7.0},
+    'Marrow': {'ec_min': 1.8, 'ec_max': 2.4, 'ph_min': 6.0, 'ph_max': 6.0},
+    'Okra': {'ec_min': 2.0, 'ec_max': 2.4, 'ph_min': 6.5, 'ph_max': 6.5},
+    'Pak Choi': {'ec_min': 1.5, 'ec_max': 2.0, 'ph_min': 7.0, 'ph_max': 7.0},
+    'Peppers': {'ec_min': 0.8, 'ec_max': 1.8, 'ph_min': 5.5, 'ph_max': 6.0},
+    'Parsley': {'ec_min': 1.8, 'ec_max': 2.2, 'ph_min': 6.0, 'ph_max': 6.5},
+    'Rhubarb': {'ec_min': 1.6, 'ec_max': 2.0, 'ph_min': 5.5, 'ph_max': 6.0},
+    'Rose': {'ec_min': 1.5, 'ec_max': 2.5, 'ph_min': 5.5, 'ph_max': 6.0},
+    'Spinach': {'ec_min': 1.8, 'ec_max': 2.3, 'ph_min': 6.0, 'ph_max': 7.0},
+    'Strawberry': {'ec_min': 1.8, 'ec_max': 2.2, 'ph_min': 6.0, 'ph_max': 6.0},
+    'Sage': {'ec_min': 1.0, 'ec_max': 1.6, 'ph_min': 5.5, 'ph_max': 6.5},
+    'Tomato': {'ec_min': 2.0, 'ec_max': 4.0, 'ph_min': 6.0, 'ph_max': 6.5},
+}
 
 def load_sensor_model():
     global sensor_model, feature_scaler, crop_encoder, action_encoder, sensor_metadata
@@ -184,17 +214,17 @@ def send_email(subject, recipient, body_html, body_text=None):
 
 def send_welcome_email(user):
     """Send a welcome email to newly registered users"""
-    subject = "Welcome to FarmSmart! 🌱"
+    subject = "Welcome to FarmSmart!"
     html_body = f"""
     <html>
     <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
         <div style="max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; border-radius: 10px;">
             <h2 style="color: #28a745;">Welcome to FarmSmart, {user.username}!</h2>
-            <p>Thank you for joining our hydroponic farming community! 🌱</p>
+            <p>Thank you for joining our hydroponic farming community!</p>
             <p>Your account has been successfully created. You can now:</p>
             <ul>
                 <li>Access real-time sensor monitoring</li>
-                <li>Get AI-powered crop recommendations</li>
+                <li>Get professional crop recommendations</li>
                 <li>Connect with other farmers in our forums</li>
             </ul>
             <p>Get started by completing your profile and exploring our platform.</p>
@@ -272,11 +302,11 @@ def send_password_changed_email(user):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html', crop_ranges=CROP_OPTIMAL_RANGES)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 
 # Define the avatars for male and female
@@ -452,11 +482,13 @@ def profile():
     return render_template('profile.html', user=current_user)
 
 @app.route('/forums', methods=['GET', 'POST'])
+@login_required
 def forums():
     categories = Category.query.all()
     return render_template('forums.html', categories=categories)
 
 @app.route('/category/<int:category_id>')
+@login_required
 def view_category(category_id):
     category = Category.query.get(category_id)
     if category:
@@ -468,6 +500,7 @@ def view_category(category_id):
 
 
 @app.route('/category/<int:category_id>/posts', methods=['GET', 'POST'])
+@login_required
 def category_posts(category_id):
     category = Category.query.get_or_404(category_id)
     posts = Post.query.filter_by(category_id=category_id).all()
@@ -493,6 +526,7 @@ def category_posts(category_id):
     return render_template('category-post.html', category=category, posts=posts)
 
 @app.route("/view_post/<int:post_id>")
+@login_required
 def view_post(post_id):
     # Get the post by ID
     post = Post.query.get_or_404(post_id)
@@ -504,6 +538,7 @@ def view_post(post_id):
 
 
 @app.route("/reply_to_post", methods=["POST"])
+@login_required
 def reply_to_post():
     content = request.form['reply_content']
     post_id = request.form['post_id']
@@ -571,20 +606,26 @@ def chat():
             from chatbot import get_chatbot
             chatbot = get_chatbot()
             response = chatbot.chat(message)
-            return jsonify({'response': response})
+            return jsonify({'response': response}), 200
         except ImportError as ie:
             print(f"Chatbot import error: {ie}")
+            import traceback
+            traceback.print_exc()
             return jsonify({
-                'response': 'Chatbot is currently unavailable. Please try again later or visit our resources page for answers.'
+                'response': 'Chatbot module is unavailable. Please try again later or visit our Resources page.'
             }), 503
         except Exception as e:
             print(f"Chatbot error: {e}")
+            import traceback
+            traceback.print_exc()
             return jsonify({
-                'response': f'The chatbot encountered an error: {str(e)[:100]}. Please try again or check your question.'
+                'response': 'The chatbot encountered an error. Please try again or visit our Resources page for hydroponics information.'
             }), 500
     except Exception as e:
         print(f"Chat API error: {e}")
-        return jsonify({'response': 'An error occurred processing your request.'}), 500
+        import traceback
+        traceback.print_exc()
+        return jsonify({'response': 'An error occurred. Please try again.'}), 500
 
 @app.route('/resources')
 def resources():   
@@ -661,19 +702,20 @@ def send_contact_message():
     return redirect(url_for('home') + "#contact")
 
 @app.route('/api/predict-sensor', methods=['POST'])
+@login_required
 def predict_sensor():
-    """API endpoint for sensor data prediction"""
+    """API endpoint for sensor data prediction with crop-specific recommendations"""
     try:
         data = request.get_json()
         
         # Extract sensor data
         crop_id = data.get('crop_id', '').strip()
-        ph_level = data.get('ph_level')
-        ec_value = data.get('ec_value')
-        ambient_temp = data.get('ambient_temp')
+        ph_level = float(data.get('ph_level', 0))
+        ec_value = float(data.get('ec_value', 0))
+        ambient_temp = float(data.get('ambient_temp', 0))
         
         # Validate inputs
-        if not crop_id or ph_level is None or ec_value is None or ambient_temp is None:
+        if not crop_id or ph_level == 0 or ec_value == 0 or ambient_temp == 0:
             return jsonify({
                 'success': False,
                 'error': 'Please provide all required sensor readings.'
@@ -695,42 +737,69 @@ def predict_sensor():
                 'error': f'Invalid crop type. Supported crops: {", ".join(sensor_metadata["crop_classes"])}'
             }), 400
         
-        # Prepare features
-        features = np.array([[crop_encoded, float(ph_level), float(ec_value), float(ambient_temp)]])
+        # Get crop-specific optimal ranges
+        crop_ranges = CROP_OPTIMAL_RANGES.get(crop_id, {})
+        ec_min = crop_ranges.get('ec_min', 1.2)
+        ec_max = crop_ranges.get('ec_max', 2.4)
+        ph_min = crop_ranges.get('ph_min', 5.5)
+        ph_max = crop_ranges.get('ph_max', 6.5)
         
-        # Scale features
-        features_scaled = feature_scaler.transform(features)
+        # Prepare features with proper column names to match training data
+        feature_names = ['Crop_ID_encoded', 'pH_Level', 'EC_Value', 'Ambient_Temp']
+        features = pd.DataFrame(
+            [[crop_encoded, ph_level, ec_value, ambient_temp]],
+            columns=feature_names
+        )
+        
+        # Scale features and convert back to DataFrame to preserve feature names
+        features_scaled_array = feature_scaler.transform(features)
+        features_scaled = pd.DataFrame(features_scaled_array, columns=feature_names)
         
         # Make prediction
         prediction = sensor_model.predict(features_scaled)
         action = action_encoder.inverse_transform(prediction)[0]
         
-        # Get prediction probability
-        probabilities = sensor_model.predict_proba(features_scaled)[0]
-        confidence = float(max(probabilities)) * 100
+        # Validate and override action based on actual sensor readings vs optimal ranges
+        # This ensures the recommendation is logically correct for the crop's needs
+        if ph_min <= ph_level <= ph_max and ec_min <= ec_value <= ec_max:
+            # Both pH and EC are within range
+            action = 'Maintain'
+        elif ec_value < ec_min:
+            # EC is too low, nutrients need to be added
+            action = 'Add_Nutrients'
+        elif ec_value > ec_max:
+            # EC is too high, need to dilute
+            action = 'Dilute'
+        elif ph_level < ph_min:
+            # pH is too low
+            action = 'Add_pH_Up'
+        elif ph_level > ph_max:
+            # pH is too high
+            action = 'Add_pH_Down'
         
-        # Generate action description with practical steps
-        action_descriptions = {
-            'Add_pH_Up': 'Your pH is too low. <strong>Action:</strong> Add pH Up solution (potassium hydroxide or potassium carbonate) gradually—start with 1ml per gallon of nutrient solution. Mix thoroughly, wait 15 minutes, then retest pH. Repeat if needed until pH reaches 5.5-6.5.',
-            
-            'Add_pH_Down': 'Your pH is too high. <strong>Action:</strong> Add pH Down solution (phosphoric acid or citric acid) gradually—start with 1ml per gallon of nutrient solution. Mix thoroughly, wait 15 minutes, then retest pH. Repeat if needed until pH reaches 5.5-6.5.',
-            
-            'Add_Nutrients': 'Your EC is too low, indicating insufficient nutrients. <strong>Action:</strong> Add your hydroponic nutrient concentrate following the manufacturer\'s feeding chart for your crop\'s growth stage. Start with half the recommended dose, mix well, wait 30 minutes, then retest EC. Target EC: 1.2-2.4 mS/cm depending on crop and stage.',
-            
-            'Dilute': 'Your EC is too high, indicating nutrient concentration is excessive. <strong>Action:</strong> Remove 20-30% of your current nutrient solution and replace with fresh pH-balanced water (pH 5.5-6.5). Mix thoroughly, wait 30 minutes, then retest EC. Repeat if needed until EC drops to optimal range.',
-            
-            'Maintain': 'Excellent! Your pH, EC, and temperature are all within optimal ranges. <strong>Action:</strong> Continue monitoring these parameters daily. Top up water as needed to maintain nutrient levels. Change your reservoir completely every 2 weeks to prevent nutrient imbalances and pathogen buildup.'
-        }
+        # Generate dynamic, crop-specific description
+        description = generate_crop_specific_recommendation(
+            action=action,
+            crop=crop_id,
+            ph_level=ph_level,
+            ec_value=ec_value,
+            ph_min=ph_min,
+            ph_max=ph_max,
+            ec_min=ec_min,
+            ec_max=ec_max
+        )
         
         return jsonify({
             'success': True,
             'action': action,
-            'description': action_descriptions.get(action, 'Follow standard monitoring procedures.'),
+            'description': description,
             'inputs': {
                 'crop': crop_id,
-                'pH': float(ph_level),
-                'EC': float(ec_value),
-                'Temperature': float(ambient_temp)
+                'pH': ph_level,
+                'EC': ec_value,
+                'Temperature': ambient_temp,
+                'pH_Range': f'{ph_min}-{ph_max}',
+                'EC_Range': f'{ec_min}-{ec_max} mS/cm'
             }
         }), 200
         
@@ -743,7 +812,48 @@ def predict_sensor():
             'error': 'An error occurred while analyzing sensor data. Please try again.'
         }), 500
 
+
+def generate_crop_specific_recommendation(action, crop, ph_level, ec_value, ph_min, ph_max, ec_min, ec_max):
+    """Generate a dynamic, crop-specific recommendation based on sensor readings and optimal ranges"""
+    
+    if action == 'Add_pH_Up':
+        return f"""<strong>pH Level Too Low for {crop}</strong><br><br>
+        Your current pH is <strong>{ph_level}</strong>, but {crop} thrives at pH <strong>{ph_min}-{ph_max}</strong>.<br><br>
+        <strong>Action:</strong> Add pH Up solution (potassium hydroxide or potassium carbonate) gradually—start with 1ml per gallon of nutrient solution. 
+        Mix thoroughly, wait 15 minutes, then retest pH. Repeat if needed until pH reaches {ph_min}-{ph_max}."""
+    
+    elif action == 'Add_pH_Down':
+        return f"""<strong>pH Level Too High for {crop}</strong><br><br>
+        Your current pH is <strong>{ph_level}</strong>, but {crop} thrives at pH <strong>{ph_min}-{ph_max}</strong>.<br><br>
+        <strong>Action:</strong> Add pH Down solution (phosphoric acid or citric acid) gradually—start with 1ml per gallon of nutrient solution. 
+        Mix thoroughly, wait 15 minutes, then retest pH. Repeat if needed until pH reaches {ph_min}-{ph_max}."""
+    
+    elif action == 'Add_Nutrients':
+        return f"""<strong>Nutrient Level Too Low for {crop}</strong><br><br>
+        Your current EC is <strong>{ec_value} mS/cm</strong>, but {crop} requires an EC of <strong>{ec_min}-{ec_max} mS/cm</strong>.<br><br>
+        <strong>Action:</strong> Add your hydroponic nutrient concentrate following the manufacturer's feeding chart for {crop}. 
+        Start with half the recommended dose, mix well, wait 30 minutes, then retest EC. Your target is {ec_min}-{ec_max} mS/cm."""
+    
+    elif action == 'Dilute':
+        return f"""<strong>Nutrient Level Too High for {crop}</strong><br><br>
+        Your current EC is <strong>{ec_value} mS/cm</strong>, but {crop} requires an EC of <strong>{ec_min}-{ec_max} mS/cm</strong>. 
+        This concentration is excessively high.<br><br>
+        <strong>Action:</strong> Remove 20-30% of your current nutrient solution and replace with fresh pH-balanced water (pH {ph_min}-{ph_max}). 
+        Mix thoroughly, wait 30 minutes, then retest EC. Repeat if needed until EC drops to {ec_min}-{ec_max} mS/cm."""
+    
+    elif action == 'Maintain':
+        return f"""<strong>Excellent! {crop} Conditions Optimal</strong><br><br>
+        Your readings are perfect for {crop}:<br>
+        • pH: <strong>{ph_level}</strong> (Target: {ph_min}-{ph_max})<br>
+        • EC: <strong>{ec_value} mS/cm</strong> (Target: {ec_min}-{ec_max})<br><br>
+        <strong>Action:</strong> Continue monitoring these parameters daily. Top up water as needed to maintain nutrient levels. 
+        Change your reservoir completely every 2 weeks to prevent nutrient imbalances and pathogen buildup."""
+    
+    else:
+        return f"Follow standard monitoring procedures for {crop}. Target pH: {ph_min}-{ph_max}, Target EC: {ec_min}-{ec_max} mS/cm"
+
 @app.route('/dashboard')
+@login_required
 def dashboard():
     return render_template("dashboard.html")
 
@@ -761,10 +871,10 @@ with app.app_context():
         print("Initializing database...")
         db.create_all()  # Creates tables if they don't exist
         create_default_categories()  # Adds default forum categories
-        print("✓ Database initialized successfully")
+        print("Database initialized successfully")
     except Exception as e:
         print(f"⚠ Warning: Database initialization error: {e}")
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

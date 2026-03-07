@@ -23,11 +23,94 @@ ARTICLES = [
     'Vertical_farming',
 ]
 
+# Keywords that help identify what type of information a paragraph contains
+CONTENT_KEYWORDS = {
+    'definition': ['is a', 'is the', 'refers to', 'means', 'defined as', 'can be defined'],
+    'benefits': ['advantage', 'benefit', 'improves', 'increase', 'better', 'superior', 'reduces', 'decrease', 'saves'],
+    'history': ['history', 'first', 'original', 'began', 'introduced', 'developed', 'since', 'earliest', 'year'],
+    'types': ['types', 'kinds', 'systems', 'methods', 'varieties', 'categories', 'forms'],
+    'how_to': ['how to', 'grow', 'growing', 'cultivation', 'process', 'steps', 'method', 'technique', 'system works'],
+    'requirements': ['require', 'need', 'necessary', 'essential', 'optimal', 'ideal', 'suitable', 'conditions'],
+    'characteristics': ['characteristics', 'feature', 'properties', 'trait', 'appearance', 'shape', 'color'],
+    'uses': ['use', 'used for', 'application', 'purpose', 'culinary', 'medicinal', 'commercial'],
+    'problems': ['disease', 'pest', 'problem', 'plagued', 'vulnerable', 'susceptible', 'deficiency'],
+}
+
 def clean_text(text: str) -> str:
     text = ' '.join(text.split())
     text = re.sub(r'\[\d+\]', '', text)
     text = re.sub(r'\([^)]*\bsee also\b[^)]*\)', '', text, flags=re.IGNORECASE)
     return text.strip()
+
+def generate_question(topic: str, content: str) -> str:
+    """Generate a question based on paragraph structure and keywords."""
+    
+    text_lower = content.lower()
+    sentences = content.split('.')
+    first_sentence = sentences[0] if sentences else content
+    
+    # Simple keyword-based question generation
+    keywords = {
+        'definition': ['is a', 'is the', 'refers to', 'means', 'defined as', 'can be', 'involves'],
+        'benefit': ['advantage', 'benefit', 'improve', 'increase', 'better', 'reduce', 'decrease', 'save', 'help'],
+        'history': ['history', 'first', 'begin', 'original', 'develop', 'year', 'discover', 'publish', '19', '20'],
+        'method': ['method', 'process', 'technique', 'system', 'work', 'way'],
+        'type': ['type', 'kind', 'variety', 'form', 'category'],
+        'requirement': ['require', 'need', 'essential', 'optimal', 'ideal', 'condition'],
+        'use': ['use', 'used for', 'application', 'purpose', 'culinary', 'commercial'],
+        'problem': ['disease', 'pest', 'problem', 'affect', 'vulnerable', 'susceptible'],
+    }
+    
+    # Count keyword matches
+    scores = {}
+    for keyword_type, words in keywords.items():
+        score = sum(text_lower.count(word) for word in words)
+        if score > 0:
+            scores[keyword_type] = score
+    
+    top_match = max(scores, key=scores.get) if scores else 'definition'
+    
+    # Extract subject more robustly
+    excluded_starts = {'this', 'that', 'these', 'those', 'each', 'every', 'another', 'both', 'some', 'the', 'such', 'many', 'most', 'all', 'existing', 'certain', 'other'}
+    
+    subject = topic  # default to topic
+    # Updated regex to handle mixed case properly
+    subject_match = re.search(r'^([A-Za-z][A-Za-z\s]*?)\s+(?:is|are|can be|refers to|means|involves|uses)', first_sentence)
+    
+    if subject_match:
+        extracted = subject_match.group(1).strip()
+        first_word = extracted.split()[0].lower() if extracted else ''
+        
+        # Only use extracted subject if first word isn't an excluded word
+        if first_word not in excluded_starts:
+            subject = extracted
+    
+    # Ensure subject is title case
+    if subject.lower() == topic.lower():
+        subject = topic
+    
+    # Simple straightforward questions
+    if top_match == 'definition':
+        return f"What is {subject}?"
+    elif top_match == 'benefit':
+        return f"What are the benefits of {subject}?"
+    elif top_match == 'history':
+        if any(word in text_lower for word in ['first', 'earliest', 'began']):
+            return f"When was {subject} first introduced?"
+        return f"What is the history of {subject}?"
+    elif top_match == 'method':
+        return f"How does {subject} work?"
+    elif top_match == 'type':
+        return f"What are the types of {subject}?"
+    elif top_match == 'requirement':
+        return f"What conditions does {subject} need?"
+    elif top_match == 'use':
+        return f"What are the uses of {subject}?"
+    elif top_match == 'problem':
+        return f"What problems affect {subject}?"
+    else:
+        # Pure fallback - just ask about the topic
+        return f"Explain {subject}"
 
 def fetch_wikipedia_article(title: str) -> Dict:
     print(f"Fetching: {title.replace('_', ' ')}")
@@ -138,28 +221,15 @@ def split_into_chunks(article: Dict, max_chars: int = 500) -> List[Dict]:
     return chunks
 
 def create_qa_pairs(chunks: List[Dict]) -> List[Dict]:
+    """Generate Q&A pairs with intelligent question generation."""
     qa_pairs = []
     
-    for idx, chunk in enumerate(chunks):
+    for chunk in chunks:
         topic = chunk['topic']
         content = chunk['content']
         
-        if 'Hydroponics' in topic and idx == 0:
-            question = "What is hydroponics?"
-        elif 'Nutrient film technique' in topic:
-            question = f"Explain the nutrient film technique in hydroponics."
-        elif 'Deep water culture' in topic:
-            question = f"What is deep water culture (DWC) in hydroponics?"
-        elif 'pH' in topic:
-            question = f"What is pH and why is it important?"
-        elif 'Electrical conductivity' in topic:
-            question = f"What is electrical conductivity (EC) in hydroponics?"
-        elif 'Nutrient' in topic or 'Fertilizer' in topic:
-            question = f"Tell me about nutrients in hydroponics."
-        elif 'Lettuce' in topic or 'Tomato' in topic:
-            question = f"How do you grow {topic.lower()} hydroponically?"
-        else:
-            question = f"What should I know about {topic.lower()} in hydroponics?"
+        # Generate a relevant question based on content
+        question = generate_question(topic, content)
         
         qa_pairs.append({
             'instruction': question,

@@ -17,7 +17,7 @@
     const inputEl = widget.querySelector('.chatbot-input');
     const sendBtn = widget.querySelector('.chatbot-send');
 
-    const welcomeMsg = "👋 Hi there! I'm your EzaSmart hydroponics assistant. I can help you with:\n\n• pH and EC management\n• Nutrient solutions\n• Growing lettuce, tomatoes, peppers\n• System setup and troubleshooting\n\nWhat would you like to know?";
+    const welcomeMsg = "Welcome. I am your EzaSmart hydroponics assistant.\n\nAsk about pH, EC, nutrients, crops, or troubleshooting.";
 
     function togglePanel() {
       const isOpening = !panel.classList.contains('open');
@@ -96,7 +96,7 @@
       } catch (err) {
         console.error('Chat error:', err);
         hideTyping();
-        addMessage('bot', '❌ Sorry, there was a connection error. Please try again or check your internet connection.');
+        addMessage('bot', 'The chatbot is currently unavailable. Please try again in a moment or visit the Resources page.');
       } finally {
         sendBtn.disabled = false;
         inputEl.focus();
