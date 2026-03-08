@@ -28,9 +28,9 @@ class TestDashboardRoute:
     
     def test_dashboard_requires_auth(self, client):
         """Test dashboard route behavior for anonymous users"""
-        response = client.get('/dashboard', follow_redirects=True)
-        assert response.status_code == 200
-        assert b'Dashboard' in response.data or b'Nutrient' in response.data
+        response = client.get('/dashboard', follow_redirects=False)
+        assert response.status_code == 302
+        assert '/login' in response.headers.get('Location', '')
     
     def test_dashboard_accessible_when_logged_in(self, authenticated_client):
         """Test that authenticated users can access dashboard"""
@@ -77,22 +77,22 @@ class TestProfileRoute:
 class TestForumsRoute:
     """Tests for forums functionality"""
     
-    def test_forums_page_loads(self, client, test_categories):
+    def test_forums_page_loads(self, authenticated_client, test_categories):
         """Test that forums page loads"""
-        response = client.get('/forums')
+        response = authenticated_client.get('/forums')
         assert response.status_code == 200
         assert b'Forum' in response.data or b'Discussion' in response.data
     
-    def test_forums_shows_categories(self, client, test_categories):
+    def test_forums_shows_categories(self, authenticated_client, test_categories):
         """Test that forums page shows categories"""
-        response = client.get('/forums')
+        response = authenticated_client.get('/forums')
         assert response.status_code == 200
         assert b'General Discussion' in response.data
     
-    def test_view_category(self, client, test_categories):
+    def test_view_category(self, authenticated_client, test_categories):
         """Test viewing a specific category"""
         category_id = test_categories[0]
-        response = client.get(f'/category/{category_id}')
+        response = authenticated_client.get(f'/category/{category_id}')
         assert response.status_code == 200
         assert b'General Discussion' in response.data
     
@@ -102,13 +102,14 @@ class TestForumsRoute:
         assert response.status_code == 200
     
     def test_create_post_requires_auth(self, client, test_categories):
-        """Test creating post anonymously (current app behavior raises DB error)"""
+        """Test creating post anonymously redirects to login"""
         category_id = test_categories[0]
-        with pytest.raises(Exception):
-            client.post(f'/category/{category_id}/posts', data={
-                'title': 'Test Post',
-                'content': 'Test content'
-            }, follow_redirects=True)
+        response = client.post(f'/category/{category_id}/posts', data={
+            'title': 'Test Post',
+            'content': 'Test content'
+        }, follow_redirects=False)
+        assert response.status_code == 302
+        assert '/login' in response.headers.get('Location', '')
     
     def test_create_post_when_authenticated(self, authenticated_client, test_categories, app):
         """Test creating a post when authenticated"""
@@ -125,20 +126,20 @@ class TestForumsRoute:
             assert post is not None
             assert post.content == 'This is my new post content'
     
-    def test_view_post(self, client, test_post):
+    def test_view_post(self, authenticated_client, test_post):
         """Test viewing a specific post"""
-        response = client.get(f'/view_post/{test_post}')
+        response = authenticated_client.get(f'/view_post/{test_post}')
         assert response.status_code == 200
         assert b'Test Post' in response.data
     
     def test_create_reply_requires_auth(self, client, test_post):
-        """Test that creating a reply (allows anonymous)"""
+        """Test that creating a reply anonymously redirects to login"""
         response = client.post('/reply_to_post', data={
             'reply_content': 'Test reply',
             'post_id': test_post
-        }, follow_redirects=True)
-
-        assert response.status_code == 200
+        }, follow_redirects=False)
+        assert response.status_code == 302
+        assert '/login' in response.headers.get('Location', '')
     
     def test_create_reply_when_authenticated(self, authenticated_client, test_post, app):
         """Test creating a reply when authenticated"""
@@ -212,9 +213,9 @@ class TestErrorHandling:
         response = client.get('/nonexistent-page-xyz')
         assert response.status_code in [200, 404]
     
-    def test_invalid_post_id(self, client):
+    def test_invalid_post_id(self, authenticated_client):
         """Test accessing non-existent post"""
-        response = client.get('/view_post/99999')
+        response = authenticated_client.get('/view_post/99999')
         assert response.status_code == 404
 
 

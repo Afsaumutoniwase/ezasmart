@@ -15,7 +15,7 @@ class TestSensorPredictionAPI:
                                content_type='application/json')
         assert response.status_code != 404
     
-    def test_predict_sensor_with_valid_data(self, client):
+    def test_predict_sensor_with_valid_data(self, authenticated_client):
         """Test sensor prediction with valid data"""
         data = {
             'crop_id': 'Tomato',
@@ -24,7 +24,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 24.5
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -38,7 +38,7 @@ class TestSensorPredictionAPI:
                 assert 'description' in result
                 assert result['action'] in ['Maintain', 'Add_Nutrients', 'Dilute', 'Add_pH_Up', 'Add_pH_Down']
     
-    def test_predict_sensor_optimal_conditions(self, client):
+    def test_predict_sensor_optimal_conditions(self, authenticated_client):
         """Test prediction with optimal conditions"""
         data = {
             'crop_id': 'Lettuce',
@@ -47,7 +47,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 22.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -56,7 +56,7 @@ class TestSensorPredictionAPI:
             if result.get('success'):
                 assert result['action'] == 'Maintain'
     
-    def test_predict_sensor_low_ph(self, client):
+    def test_predict_sensor_low_ph(self, authenticated_client):
         """Test prediction with pH too low"""
         data = {
             'crop_id': 'Tomato',
@@ -65,7 +65,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 24.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -74,7 +74,7 @@ class TestSensorPredictionAPI:
             if result.get('success'):
                 assert result['action'] == 'Add_pH_Up'
     
-    def test_predict_sensor_high_ph(self, client):
+    def test_predict_sensor_high_ph(self, authenticated_client):
         """Test prediction with pH too high"""
         data = {
             'crop_id': 'Cucumber',
@@ -83,7 +83,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 23.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -92,7 +92,7 @@ class TestSensorPredictionAPI:
             if result.get('success'):
                 assert result['action'] == 'Add_pH_Down'
     
-    def test_predict_sensor_low_ec(self, client):
+    def test_predict_sensor_low_ec(self, authenticated_client):
         """Test prediction with EC too low"""
         data = {
             'crop_id': 'Tomato',
@@ -101,7 +101,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 24.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -110,7 +110,7 @@ class TestSensorPredictionAPI:
             if result.get('success'):
                 assert result['action'] == 'Add_Nutrients'
     
-    def test_predict_sensor_high_ec(self, client):
+    def test_predict_sensor_high_ec(self, authenticated_client):
         """Test prediction with EC too high"""
         data = {
             'crop_id': 'Lettuce',
@@ -119,7 +119,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 22.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -128,7 +128,7 @@ class TestSensorPredictionAPI:
             if result.get('success'):
                 assert result['action'] == 'Dilute'
     
-    def test_predict_sensor_missing_crop(self, client):
+    def test_predict_sensor_missing_crop(self, authenticated_client):
         """Test prediction with missing crop_id"""
         data = {
             'ph_level': 6.5,
@@ -136,7 +136,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 24.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -144,7 +144,7 @@ class TestSensorPredictionAPI:
         result = json.loads(response.data)
         assert 'error' in result
     
-    def test_predict_sensor_missing_ph(self, client):
+    def test_predict_sensor_missing_ph(self, authenticated_client):
         """Test prediction with missing pH level"""
         data = {
             'crop_id': 'Tomato',
@@ -152,7 +152,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 24.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -160,7 +160,7 @@ class TestSensorPredictionAPI:
         result = json.loads(response.data)
         assert 'error' in result
     
-    def test_predict_sensor_missing_ec(self, client):
+    def test_predict_sensor_missing_ec(self, authenticated_client):
         """Test prediction with missing EC value"""
         data = {
             'crop_id': 'Tomato',
@@ -168,7 +168,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 24.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -176,7 +176,7 @@ class TestSensorPredictionAPI:
         result = json.loads(response.data)
         assert 'error' in result
     
-    def test_predict_sensor_missing_temperature(self, client):
+    def test_predict_sensor_missing_temperature(self, authenticated_client):
         """Test prediction with missing temperature"""
         data = {
             'crop_id': 'Tomato',
@@ -184,7 +184,7 @@ class TestSensorPredictionAPI:
             'ec_value': 2.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -192,7 +192,7 @@ class TestSensorPredictionAPI:
         result = json.loads(response.data)
         assert 'error' in result
     
-    def test_predict_sensor_invalid_crop(self, client):
+    def test_predict_sensor_invalid_crop(self, authenticated_client):
         """Test prediction with invalid crop type"""
         data = {
             'crop_id': 'InvalidCrop',
@@ -201,13 +201,13 @@ class TestSensorPredictionAPI:
             'ambient_temp': 24.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
         assert response.status_code in [400, 503]
     
-    def test_predict_sensor_zero_values(self, client):
+    def test_predict_sensor_zero_values(self, authenticated_client):
         """Test prediction with zero values"""
         data = {
             'crop_id': 'Tomato',
@@ -216,7 +216,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -224,15 +224,15 @@ class TestSensorPredictionAPI:
         result = json.loads(response.data)
         assert 'error' in result
     
-    def test_predict_sensor_invalid_json(self, client):
+    def test_predict_sensor_invalid_json(self, authenticated_client):
         """Test prediction with invalid JSON"""
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data='invalid json',
                                content_type='application/json')
         
         assert response.status_code in [400, 500]
     
-    def test_predict_sensor_returns_inputs(self, client):
+    def test_predict_sensor_returns_inputs(self, authenticated_client):
         """Test that prediction returns input values"""
         data = {
             'crop_id': 'Basil',
@@ -241,7 +241,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 23.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         
@@ -253,7 +253,7 @@ class TestSensorPredictionAPI:
                 assert result['inputs']['pH'] == 5.8
                 assert result['inputs']['EC'] == 1.2
     
-    def test_predict_sensor_includes_ranges(self, client):
+    def test_predict_sensor_includes_ranges(self, authenticated_client):
         """Test that prediction includes optimal ranges"""
         data = {
             'crop_id': 'Spinach',
@@ -262,7 +262,7 @@ class TestSensorPredictionAPI:
             'ambient_temp': 22.0
         }
         
-        response = client.post('/api/predict-sensor',
+        response = authenticated_client.post('/api/predict-sensor',
                                data=json.dumps(data),
                                content_type='application/json')
         

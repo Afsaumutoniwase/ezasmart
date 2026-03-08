@@ -229,10 +229,9 @@ class TestProtectedRoutes:
     
     def test_dashboard_requires_login(self, client):
         """Test dashboard route behavior for anonymous users"""
-        response = client.get('/dashboard', follow_redirects=True)
-        
-        assert response.status_code == 200
-        assert b'Dashboard' in response.data or b'Nutrient' in response.data
+        response = client.get('/dashboard', follow_redirects=False)
+        assert response.status_code == 302
+        assert '/login' in response.headers.get('Location', '')
     
     def test_profile_requires_login(self, client):
         """Test that profile page requires authentication"""

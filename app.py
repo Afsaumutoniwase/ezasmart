@@ -26,7 +26,6 @@ app.config['UPLOAD_FOLDER'] = os.path.join('static', 'img')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-# Flask-Mail configuration
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', '587'))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
@@ -42,7 +41,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# Load sensor monitoring model
 SENSOR_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'Models', 'ai_nutrient_analysis')
 sensor_model = None
 feature_scaler = None
@@ -96,7 +94,6 @@ def load_sensor_model():
         print(f"Error loading sensor model: {e}")
         sensor_model = None
 
-# Load models at startup
 load_sensor_model()
 
 def allowed_file(filename):
@@ -183,8 +180,7 @@ class Post(db.Model):
         return f'<Post {self.title}>'
 
 def create_default_categories():
-    # Check if categories already exist
-    if not Category.query.first():  # If no categories exist, add default ones
+    if not Category.query.first():
         categories = [
             Category(name='General Discussion', description='A place for general, discussions or questions.'),
             Category(name='Introduction to Hydroponics', description='For beginners to learn about hydroponics.'),
@@ -198,7 +194,6 @@ def create_default_categories():
         db.session.add_all(categories)
         db.session.commit()
 
-# Email notification functions
 def send_email(subject, recipient, body_html, body_text=None):
     """Send an email using Flask-Mail"""
     try:
@@ -309,7 +304,6 @@ def load_user(user_id):
     return db.session.get(User, int(user_id))
 
 
-# Define the avatars for male and female
 male_avatars = ['profilem1.jpg', 'profilem2.png']
 female_avatars = ['profilew1.jpg', 'profilew2.jpeg', 'profilew3.jpeg']
 
@@ -325,15 +319,13 @@ def assign_avatar(gender):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Handle registration
         if request.form.get('form_type') == 'register':
             username = request.form.get('username')
             email = request.form.get('email')
             password = request.form.get('password')
-            role = 'farmer'  # All users are farmers
-            gender = request.form.get('gender')  # Capture gender input
+            role = 'farmer'
+            gender = request.form.get('gender')
 
-            # Check if user already exists
             if User.query.filter_by(username=username).first():
                 flash('Username already taken. Please choose a different one.', 'error')
                 return redirect(url_for('login') + '#register-form')
@@ -341,11 +333,9 @@ def login():
                 flash('Email already registered. Please login or use a different email.', 'error')
                 return redirect(url_for('login') + '#register-form')
 
-            # Assign an avatar based on gender
             avatar_name = assign_avatar(gender)
 
             try:
-                # Register new user
                 new_user = User(username=username, email=email, role=role, gender=gender, profile_image_url=avatar_name)
                 new_user.set_password(password)
                 db.session.add(new_user)
@@ -356,7 +346,6 @@ def login():
                     send_welcome_email(new_user)
                 except Exception as e:
                     print(f"Warning: Failed to send welcome email: {e}")
-                    # Continue anyway - user is registered
                 
                 flash('Registration successful! Please check your email for confirmation.')
                 return redirect(url_for('login'))
@@ -371,8 +360,6 @@ def login():
             if user and user.check_password(request.form['password']):
                 login_user(user)
                 flash(f'Welcome back, {user.username}!', 'success')
-
-                # Redirect to forums after successful login
                 return redirect(url_for('forums'))
 
             flash("Invalid email or password. Please try again.", "error")
@@ -387,10 +374,8 @@ def forgot_password():
         user = User.query.filter_by(email=email).first()
         
         if user:
-            # Generate reset token
             token = user.generate_reset_token()
             
-            # Send password reset email
             if send_password_reset_email(user, token):
                 flash('Password reset instructions have been sent to your email.', 'success')
             else:
@@ -405,7 +390,6 @@ def forgot_password():
 
 @app.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
-    # Find user with this token
     user = User.query.filter_by(reset_token=token).first()
     
     if not user or not user.verify_reset_token(token):
@@ -424,11 +408,8 @@ def reset_password(token):
             flash('Password must be at least 6 characters long.', 'error')
             return render_template('reset_password.html', token=token)
         
-        # Update password
         user.set_password(password)
         user.clear_reset_token()
-        
-        # Send confirmation email
         send_password_changed_email(user)
         
         flash('Your password has been reset successfully! Please log in with your new password.', 'success')
@@ -443,13 +424,11 @@ def allowed_file(filename):
 @login_required
 def profile():
     if request.method == 'POST':
-        # Collect form data
         username = request.form.get('username', current_user.username)
         email = request.form.get('email', current_user.email)
         address = request.form.get('address', current_user.address)
         phone = request.form.get('phone', current_user.phone)
 
-        # Handle profile image upload
         if 'profile_image' in request.files:
             file = request.files['profile_image']
             if file and file.filename != '' and allowed_file(file.filename):
@@ -458,18 +437,12 @@ def profile():
                 file_ext = filename.rsplit('.', 1)[1].lower()
                 unique_filename = f"profile_{current_user.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{file_ext}"
                 
-                # Ensure upload folder exists
                 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                
-                # Save the file
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
                 file.save(filepath)
-                
-                # Update user's profile image URL
                 current_user.profile_image_url = unique_filename
                 flash('Profile image updated successfully!', 'success')
 
-        # Update user data with new information
         current_user.username = username
         current_user.email = email
         current_user.address = address
@@ -505,16 +478,12 @@ def category_posts(category_id):
     category = Category.query.get_or_404(category_id)
     posts = Post.query.filter_by(category_id=category_id).all()
 
-    # Handling the creation of a new post
     if request.method == 'POST' and 'title' in request.form and 'content' in request.form:
         title = request.form['title']
         content = request.form['content']
 
         # Handle user ID: if the user is logged in, use their ID; else, handle anonymous posts
         user_id = current_user.id if current_user.is_authenticated else None
-
-        # Log the data for debugging
-        app.logger.debug(f'Creating post with title: {title}, content: {content}, user_id: {user_id}, category_id: {category.id}')
         
         new_post = Post(title=title, content=content, category_id=category.id, user_id=user_id)
         db.session.add(new_post)
@@ -528,10 +497,7 @@ def category_posts(category_id):
 @app.route("/view_post/<int:post_id>")
 @login_required
 def view_post(post_id):
-    # Get the post by ID
     post = Post.query.get_or_404(post_id)
-    
-    # Get all replies for this post
     replies = Reply.query.filter_by(post_id=post_id).all()
     
     return render_template('view_post.html', post=post, replies=replies)
@@ -542,15 +508,13 @@ def view_post(post_id):
 def reply_to_post():
     content = request.form['reply_content']
     post_id = request.form['post_id']
-    reply_author = request.form.get('reply_author')  # Get the value of the reply_author field
+    reply_author = request.form.get('reply_author')
 
-    # Check if the user wants to post anonymously or as themselves
     if current_user.is_authenticated:
-        user_id = current_user.id  # Regular user posting
+        user_id = current_user.id
     else:
-        user_id = None  # Anonymous if not logged in
+        user_id = None
     
-    # Create the reply
     reply = Reply(content=content, created_at=datetime.utcnow(), user_id=user_id, post_id=post_id)
     db.session.add(reply)
     db.session.commit()
@@ -561,33 +525,29 @@ def reply_to_post():
 @login_required
 def account_settings():
     if request.method == 'POST':
-        # Handle the change password functionality
         if 'change_password' in request.form:
             current_password = request.form.get('current_password')
             new_password = request.form.get('new_password')
             confirm_password = request.form.get('confirm_password')
 
-            # Verify current password
             if not current_user.check_password(current_password):
                 flash('Incorrect current password.', 'error')
             elif new_password != confirm_password:
                 flash('New password and confirmation do not match.', 'error')
             else:
-                # Update password
                 current_user.set_password(new_password)
                 db.session.commit()
                 flash('Password updated successfully.', 'success')
 
-        # Handle the delete account functionality
         elif 'delete_profile' in request.form:
             db.session.delete(current_user)
             db.session.commit()
             flash('Your account has been deleted successfully.', 'success')
-            return redirect(url_for('login'))  # Redirect to the login page after deletion
+            return redirect(url_for('login'))
 
-        return redirect(url_for('account_settings'))  # Ensure the function name matches here
+        return redirect(url_for('account_settings'))
 
-    return render_template('settings.html', user=current_user)  # Template rendering
+    return render_template('settings.html', user=current_user)
 @app.route('/help')
 def help():   
     return render_template('help.html', title="Help")
@@ -633,13 +593,11 @@ def resources():
 
 @app.route('/help/contact', methods=['POST'])
 def send_support():
-    # Handle form data
     name = request.form.get('name')
     email = request.form.get('email')
     subject = request.form.get('subject')
     message = request.form.get('message')
 
-    # Construct the email message
     full_message = f"""
     Subject: {subject}
 
@@ -650,7 +608,6 @@ def send_support():
     """
 
     try:
-        # Sending the email
         with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as connection:
             if app.config['MAIL_USE_TLS']:
                 connection.starttls()
@@ -664,16 +621,14 @@ def send_support():
     except Exception as e:
         flash(f"An error occurred while sending your message: {str(e)}", 'danger')
 
-    return redirect(url_for('help'))  # Redirect back to the help page
+    return redirect(url_for('help'))
 @app.route('/contact', methods=['POST'])
 def send_contact_message():
-    # Handle form data
     name = request.form.get('name')
     email = request.form.get('email')
-    subject = request.form.get('subject', 'Contact Form Submission')  # Default subject if none is provided
+    subject = request.form.get('subject', 'Contact Form Submission')
     message = request.form.get('message')
 
-    # Construct the email message
     full_message = f"""
     Subject: {subject}
 
@@ -684,7 +639,6 @@ def send_contact_message():
     """
 
     try:
-        # Sending the email
         with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as connection:
             if app.config['MAIL_USE_TLS']:
                 connection.starttls()
@@ -698,23 +652,18 @@ def send_contact_message():
     except Exception as e:
         flash(f"An error occurred while sending your message: {str(e)}", 'danger')
 
-    # Redirect back to the home page's contact section
     return redirect(url_for('home') + "#contact")
 
 @app.route('/api/predict-sensor', methods=['POST'])
-@login_required
 def predict_sensor():
     """API endpoint for sensor data prediction with crop-specific recommendations"""
     try:
         data = request.get_json()
-        
-        # Extract sensor data
         crop_id = data.get('crop_id', '').strip()
         ph_level = float(data.get('ph_level', 0))
         ec_value = float(data.get('ec_value', 0))
         ambient_temp = float(data.get('ambient_temp', 0))
         
-        # Validate inputs
         if not crop_id or ph_level == 0 or ec_value == 0 or ambient_temp == 0:
             return jsonify({
                 'success': False,
@@ -728,7 +677,6 @@ def predict_sensor():
                 'error': 'Sensor model is not available at the moment. Please try again later.'
             }), 503
         
-        # Encode crop ID
         try:
             crop_encoded = crop_encoder.transform([crop_id])[0]
         except:
@@ -737,7 +685,7 @@ def predict_sensor():
                 'error': f'Invalid crop type. Supported crops: {", ".join(sensor_metadata["crop_classes"])}'
             }), 400
         
-        # Get crop-specific optimal ranges
+
         crop_ranges = CROP_OPTIMAL_RANGES.get(crop_id, {})
         ec_min = crop_ranges.get('ec_min', 1.2)
         ec_max = crop_ranges.get('ec_max', 2.4)
@@ -751,33 +699,24 @@ def predict_sensor():
             columns=feature_names
         )
         
-        # Scale features and convert back to DataFrame to preserve feature names
         features_scaled_array = feature_scaler.transform(features)
         features_scaled = pd.DataFrame(features_scaled_array, columns=feature_names)
-        
-        # Make prediction
         prediction = sensor_model.predict(features_scaled)
         action = action_encoder.inverse_transform(prediction)[0]
         
         # Validate and override action based on actual sensor readings vs optimal ranges
         # This ensures the recommendation is logically correct for the crop's needs
         if ph_min <= ph_level <= ph_max and ec_min <= ec_value <= ec_max:
-            # Both pH and EC are within range
             action = 'Maintain'
         elif ec_value < ec_min:
-            # EC is too low, nutrients need to be added
             action = 'Add_Nutrients'
         elif ec_value > ec_max:
-            # EC is too high, need to dilute
             action = 'Dilute'
         elif ph_level < ph_min:
-            # pH is too low
             action = 'Add_pH_Up'
         elif ph_level > ph_max:
-            # pH is too high
             action = 'Add_pH_Down'
         
-        # Generate dynamic, crop-specific description
         description = generate_crop_specific_recommendation(
             action=action,
             crop=crop_id,
@@ -877,4 +816,4 @@ with app.app_context():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+    app.run(debug=True, use_reloader=False, port=5010)
