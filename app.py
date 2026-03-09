@@ -78,6 +78,83 @@ CROP_OPTIMAL_RANGES = {
     'Tomato': {'ec_min': 2.0, 'ec_max': 4.0, 'ph_min': 6.0, 'ph_max': 6.5},
 }
 
+def validate_sensor_input(data):
+    """
+    Comprehensive input validation for sensor prediction API.
+    Returns (is_valid, error_message, cleaned_data).
+    """
+    if not data or not isinstance(data, dict):
+        return False, "Invalid request format. Expected JSON data.", None
+    
+    # Validate crop_id
+    crop_id = data.get('crop_id', '').strip()
+    if not crop_id:
+        return False, "crop_id is required", None
+    if len(crop_id) > 50:
+        return False, "crop_id exceeds maximum length", None
+    if crop_id not in CROP_OPTIMAL_RANGES:
+        valid_crops = ', '.join(sorted(CROP_OPTIMAL_RANGES.keys()))
+        return False, f"Invalid crop type. Supported crops: {valid_crops}", None
+    
+    # Validate pH level
+    try:
+        ph_level = float(data.get('ph_level', 0))
+    except (ValueError, TypeError):
+        return False, "ph_level must be a valid number", None
+    if ph_level <= 0 or ph_level > 14:
+        return False, "ph_level must be between 0.1 and 14 (typical hydroponic range: 4-8)", None
+    
+    # Validate EC value
+    try:
+        ec_value = float(data.get('ec_value', 0))
+    except (ValueError, TypeError):
+        return False, "ec_value must be a valid number", None
+    if ec_value <= 0 or ec_value > 10:
+        return False, "ec_value must be between 0.1 and 10 mS/cm (typical range: 0.5-5)", None
+    
+    # Validate ambient temperature
+    try:
+        ambient_temp = float(data.get('ambient_temp', 0))
+    except (ValueError, TypeError):
+        return False, "ambient_temp must be a valid number", None
+    if ambient_temp < -10 or ambient_temp > 60:
+        return False, "ambient_temp must be between -10°C and 60°C (typical range: 10-35°C)", None
+    
+    cleaned_data = {
+        'crop_id': crop_id,
+        'ph_level': round(ph_level, 2),
+        'ec_value': round(ec_value, 2),
+        'ambient_temp': round(ambient_temp, 1)
+    }
+    
+    return True, None, cleaned_data
+
+
+def validate_chat_input(data):
+    """
+    Comprehensive input validation for chatbot API.
+    Returns (is_valid, error_message, cleaned_message).
+    """
+    if not data or not isinstance(data, dict):
+        return False, "Invalid request format. Expected JSON data.", None
+    
+    message = data.get('message', '').strip()
+    
+    if not message:
+        return False, "Message cannot be empty", None
+    
+    if len(message) > 1000:
+        return False, "Message exceeds maximum length of 1000 characters", None
+    
+    # Check for suspicious patterns (basic XSS/injection prevention)
+    suspicious_patterns = ['<script', 'javascript:', 'onerror=', 'onclick=']
+    message_lower = message.lower()
+    for pattern in suspicious_patterns:
+        if pattern in message_lower:
+            return False, "Message contains invalid characters or patterns", None
+    
+    return True, None, message
+
 def load_sensor_model():
     global sensor_model, feature_scaler, crop_encoder, action_encoder, sensor_metadata
     try:
@@ -566,9 +643,11 @@ def chat():
     """EzaSmart Hydroponics Explainer Chatbot - answers questions about hydroponics."""
     try:
         data = request.get_json() or {}
-        message = data.get('message', '').strip()
-        if not message:
-            return jsonify({'response': 'Please ask a question about hydroponics!'}), 400
+        
+        # Validate input data
+        is_valid, error_msg, message = validate_chat_input(data)
+        if not is_valid:
+            return jsonify({'response': error_msg}), 400
         
         try:
             from chatbot import get_chatbot
@@ -699,16 +778,19 @@ def predict_sensor():
     """API endpoint for sensor data prediction with crop-specific recommendations"""
     try:
         data = request.get_json()
-        crop_id = data.get('crop_id', '').strip()
-        ph_level = float(data.get('ph_level', 0))
-        ec_value = float(data.get('ec_value', 0))
-        ambient_temp = float(data.get('ambient_temp', 0))
         
-        if not crop_id or ph_level == 0 or ec_value == 0 or ambient_temp == 0:
+        # Validate input data
+        is_valid, error_msg, cleaned_data = validate_sensor_input(data)
+        if not is_valid:
             return jsonify({
                 'success': False,
-                'error': 'Please provide all required sensor readings.'
+                'error': error_msg
             }), 400
+        
+        crop_id = cleaned_data['crop_id']
+        ph_level = cleaned_data['ph_level']
+        ec_value = cleaned_data['ec_value']
+        ambient_temp = cleaned_data['ambient_temp']
         
         # Check if model is loaded
         if sensor_model is None or feature_scaler is None or crop_encoder is None or action_encoder is None:

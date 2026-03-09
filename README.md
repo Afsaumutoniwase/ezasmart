@@ -1,7 +1,7 @@
 # EzaSmart
 
 **Quick Links:**
-- **Deployed App:** https://video.kandaassist.com/login
+- **Deployed App:** https://ezasmart.online/
 - **GitHub:** https://github.com/Afsaumutoniwase/ezasmart
 - **Demo Video:** [Add link after recording]
 
@@ -162,11 +162,10 @@ Use these examples in Postman or browser dev tools:
 - Added sensor analysis: checks your measurements against crop requirements.
 - Added forums and chatbot: so users can learn and help each other.
 - Added tests: to catch bugs and verify everything still works.
+- Deployed the app online: live at https://ezasmart.online/ for public access.
 
 ## 6) Recommendations and Future Work
 
-- Add role-based authorization and stronger input validation.
-- Add load testing for chatbot and prediction endpoints.
 - Add observability (request logs, error rates, latency dashboard).
 - Extend model retraining pipeline with more recent hydroponics datasets.
 
@@ -191,16 +190,7 @@ Use these examples in Postman or browser dev tools:
 3. Set environment variables (`.env` config).
 4. Deploy and verify live URL.
 
-**Deployed URL:** `https://video.kandaassist.com/login`
-
-### Deployment verification checklist
-
-- [ ] Landing page loads at deployed URL.
-- [ ] Login/register flows work.
-- [ ] Dashboard and profile render correctly after login.
-- [ ] `/api/predict-sensor` returns structured JSON with valid inputs.
-- [ ] `/api/chat` returns chatbot response.
-- [ ] Test run on deployed environment shows same functionality as local.
+**Deployed URL:** `https://ezasmart.online/`
 
 ## 8) Project Structure
 
