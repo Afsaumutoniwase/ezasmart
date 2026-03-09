@@ -2,12 +2,14 @@ from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 import smtplib
 import random
+import re
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import render_template, Flask, request, redirect, url_for, session, jsonify
+from flask import render_template, Flask, request, redirect, url_for, session, jsonify, abort
 from flask_login import login_user, LoginManager, UserMixin, current_user, login_required, logout_user
 from flask import flash
 from flask_mail import Mail, Message
+from functools import wraps
 import os
 import hashlib
 import joblib
@@ -41,6 +43,32 @@ mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+def admin_required(f):
+    """Decorator to require admin role for access"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('login'))
+        if current_user.role != 'admin':
+            flash('You do not have permission to access this page.', 'danger')
+            return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
+def moderator_required(f):
+    """Decorator to require admin or moderator role for access"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('login'))
+        if current_user.role not in ['admin', 'moderator']:
+            flash('You do not have permission to access this page.', 'danger')
+            return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
 
 SENSOR_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'Models', 'ai_nutrient_analysis')
 sensor_model = None
@@ -79,10 +107,6 @@ CROP_OPTIMAL_RANGES = {
 }
 
 def validate_sensor_input(data):
-    """
-    Comprehensive input validation for sensor prediction API.
-    Returns (is_valid, error_message, cleaned_data).
-    """
     if not data or not isinstance(data, dict):
         return False, "Invalid request format. Expected JSON data.", None
     
@@ -131,10 +155,6 @@ def validate_sensor_input(data):
 
 
 def validate_chat_input(data):
-    """
-    Comprehensive input validation for chatbot API.
-    Returns (is_valid, error_message, cleaned_message).
-    """
     if not data or not isinstance(data, dict):
         return False, "Invalid request format. Expected JSON data.", None
     
@@ -146,7 +166,6 @@ def validate_chat_input(data):
     if len(message) > 1000:
         return False, "Message exceeds maximum length of 1000 characters", None
     
-    # Check for suspicious patterns (basic XSS/injection prevention)
     suspicious_patterns = ['<script', 'javascript:', 'onerror=', 'onclick=']
     message_lower = message.lower()
     for pattern in suspicious_patterns:
@@ -154,6 +173,18 @@ def validate_chat_input(data):
             return False, "Message contains invalid characters or patterns", None
     
     return True, None, message
+
+def validate_email(email):
+    if not email or not isinstance(email, str):
+        return False
+    
+    email = email.strip()
+    
+    if len(email) < 3 or len(email) > 254:
+        return False
+    
+    email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(email_pattern, email) is not None
 
 def load_sensor_model():
     global sensor_model, feature_scaler, crop_encoder, action_encoder, sensor_metadata
@@ -272,8 +303,21 @@ def create_default_categories():
         db.session.add_all(categories)
         db.session.commit()
 
+def create_default_admin():
+    if not User.query.filter_by(role='admin').first():
+        default_admin = User(
+            username='ezasmart',
+            email='ezasmartonline@gmail.com',
+            role='admin',
+            gender='other',
+            profile_image_url='logo.png'
+        )
+        default_admin.set_password('Capstone2026')
+        db.session.add(default_admin)
+        db.session.commit()
+        print("Default admin user created (email: ezasmartonline@gmail.com, password: Capstone2026)")
+
 def send_email(subject, recipient, body_html, body_text=None):
-    """Send an email using Flask-Mail"""
     try:
         msg = Message(subject=subject,
                       recipients=[recipient],
@@ -403,6 +447,10 @@ def login():
             password = request.form.get('password')
             role = 'farmer'
             gender = request.form.get('gender')
+            
+            if not validate_email(email):
+                flash('Please enter a valid email address.', 'error')
+                return redirect(url_for('login') + '#register-form')
 
             if User.query.filter_by(username=username).first():
                 flash('Username already taken. Please choose a different one.', 'error')
@@ -434,10 +482,19 @@ def login():
                 return redirect(url_for('login') + '#register-form')
 
         elif request.form.get('form_type') == 'login':
-            user = User.query.filter_by(email=request.form['email']).first()
-            if user and user.check_password(request.form['password']):
+            email = request.form.get('email', '')
+            password = request.form.get('password', '')
+            
+            if not validate_email(email):
+                flash('Please enter a valid email address.', 'error')
+                return redirect(url_for('login'))
+            
+            user = User.query.filter_by(email=email).first()
+            if user and user.check_password(password):
                 login_user(user)
                 flash(f'Welcome back, {user.username}!', 'success')
+                if user.role == 'admin' or user.email == 'ezasmartonline@gmail.com':
+                    return redirect(url_for('admin_dashboard'))
                 return redirect(url_for('forums'))
 
             flash("Invalid email or password. Please try again.", "error")
@@ -448,7 +505,12 @@ def login():
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
-        email = request.form.get('email')
+        email = request.form.get('email', '').strip()
+        
+        if not validate_email(email):
+            flash('Please enter a valid email address.', 'error')
+            return redirect(url_for('forgot_password'))
+        
         user = User.query.filter_by(email=email).first()
         
         if user:
@@ -918,6 +980,84 @@ def generate_crop_specific_recommendation(action, crop, ph_level, ec_value, ph_m
 def dashboard():
     return render_template("dashboard.html")
 
+@app.route('/admin')
+@admin_required
+def admin_dashboard():
+    """Admin dashboard with user management and statistics"""
+    users = User.query.all()
+    total_users = User.query.count()
+    total_posts = Post.query.count()
+    total_replies = Reply.query.count()
+    
+    # Count users by role
+    admins = User.query.filter_by(role='admin').count()
+    moderators = User.query.filter_by(role='moderator').count()
+    regular_users = User.query.filter(User.role.in_([None, '', 'user'])).count()
+    
+    stats = {
+        'total_users': total_users,
+        'admins': admins,
+        'moderators': moderators,
+        'regular_users': regular_users,
+        'total_posts': total_posts,
+        'total_replies': total_replies
+    }
+    
+    return render_template('admin_dashboard.html', users=users, stats=stats)
+
+@app.route('/admin/user/<int:user_id>/role', methods=['POST'])
+@admin_required
+def update_user_role(user_id):
+    """Update a user's role"""
+    user = User.query.get_or_404(user_id)
+    new_role = request.form.get('role')
+    
+    if new_role not in ['user', 'moderator', 'admin']:
+        flash('Invalid role specified.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    
+    # Prevent admin from removing their own admin role
+    if user.id == current_user.id and new_role != 'admin':
+        flash('You cannot remove your own admin privileges.', 'warning')
+        return redirect(url_for('admin_dashboard'))
+    
+    user.role = new_role
+    db.session.commit()
+    flash(f'Successfully updated {user.username}\'s role to {new_role}.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/user/<int:user_id>/delete', methods=['POST'])
+@admin_required
+def delete_user(user_id):
+    """Delete a user (admin only)"""
+    user = User.query.get_or_404(user_id)
+    
+    # Prevent admin from deleting themselves
+    if user.id == current_user.id:
+        flash('You cannot delete your own account.', 'warning')
+        return redirect(url_for('admin_dashboard'))
+    
+    username = user.username
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'User {username} has been deleted.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/post/<int:post_id>/delete', methods=['POST'])
+@moderator_required
+def delete_post(post_id):
+    """Delete a forum post (moderator/admin only)"""
+    post = Post.query.get_or_404(post_id)
+    category_id = post.category_id
+    
+    # Delete all replies first
+    Reply.query.filter_by(post_id=post.id).delete()
+    
+    db.session.delete(post)
+    db.session.commit()
+    flash('Post has been deleted.', 'success')
+    return redirect(url_for('category_view', category_id=category_id))
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -932,9 +1072,10 @@ with app.app_context():
         print("Initializing database...")
         db.create_all()  # Creates tables if they don't exist
         create_default_categories()  # Adds default forum categories
+        create_default_admin()  # Creates default admin if none exists
         print("Database initialized successfully")
     except Exception as e:
-        print(f"⚠ Warning: Database initialization error: {e}")
+        print(f"Warning: Database initialization error: {e}")
 
 
 if __name__ == '__main__':

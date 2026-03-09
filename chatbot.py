@@ -56,7 +56,7 @@ class EzaSmartChatbot:
             with open(self.rag_dir / "metadata.json", "r", encoding="utf-8") as f:
                 self.metadata = json.load(f)
             
-            print(f"✓ Knowledge base loaded: {self.metadata['total_pairs']} Q&A pairs")
+            print(f"Knowledge base loaded: {self.metadata['total_pairs']} Q&A pairs")
             
             # Try to load T5 model (optional - fallback to retrieval-only if fails)
             try:
@@ -64,40 +64,40 @@ class EzaSmartChatbot:
                 model_name = self.metadata.get('model_name', 'Afsa20/Farmsmart_Growmate')
                 
                 self.tokenizer = T5Tokenizer.from_pretrained(model_name)
-                print("    ✓ Tokenizer loaded")
+                print("    Tokenizer loaded")
                 
                 self.model = T5ForConditionalGeneration.from_pretrained(
                     model_name,
                     torch_dtype=torch.float16 if self.device.type == 'cuda' else torch.float32,
                     device_map="auto" if self.device.type == 'cuda' else None
                 )
-                print("    ✓ Model weights loaded")
+                print("    Model weights loaded")
                 
                 if self.device.type == 'cpu':
                     self.model = self.model.to(self.device)
                 
                 self.model.eval()
                 self.model_loaded = True
-                print(f"✓ T5 model ready on {self.device}")
+                print(f"T5 model ready on {self.device}")
                 
             except RuntimeError as re:
                 if "out of memory" in str(re).lower():
-                    print(f"⚠ T5 Model load failed: OUT OF MEMORY")
+                    print(f"T5 Model load failed: OUT OF MEMORY")
                     print(f"  Available CUDA memory is insufficient. Using retrieval-only mode.")
                 else:
-                    print(f"⚠ T5 Model load failed: {re}")
-                print("⚠ Running in retrieval-only mode (knowledge base answers only)")
+                    print(f"T5 Model load failed: {re}")
+                print("Running in retrieval-only mode (knowledge base answers only)")
                 self.model_loaded = False
                 
             except Exception as model_error:
-                print(f"⚠ T5 Model load failed: {model_error}")
-                print("⚠ Running in retrieval-only mode (knowledge base answers only)")
+                print(f"T5 Model load failed: {model_error}")
+                print("Running in retrieval-only mode (knowledge base answers only)")
                 self.model_loaded = False
             
-            print("✓ EzaSmart Chatbot ready!")
+            print("EzaSmart Chatbot ready!")
             
         except Exception as e:
-            print(f"✗ Critical error loading RAG system: {e}")
+            print(f"Critical error loading RAG system: {e}")
             import traceback
             traceback.print_exc()
             raise

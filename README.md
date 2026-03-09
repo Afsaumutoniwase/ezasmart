@@ -44,6 +44,13 @@ Manual monitoring of EC, pH, and temperature is time-consuming and error-prone. 
    - Learning materials on hydroponics
    - Contact form for support
 
+6. **Admin Panel**
+   - Role-based authorization (admin and moderator roles)
+   - User management (view, update roles, delete users)
+   - Post moderation (delete posts and replies)
+   - Platform statistics (user counts, post counts)
+   - Accessible at `/admin` for authorized users
+
 ### Technical Stack
 
 - **Backend**: Flask 3.0.0 with SQLAlchemy ORM
@@ -70,6 +77,8 @@ python app.py
 
 Open `http://127.0.0.1:5000`
 
+**Admin Access:** Login with default credentials `ezasmartonline@gmail.com` / `Capstone2026` to access the admin dashboard at `/admin`.
+
 ### Optional environment variables (`.env`)
 
 ```env
@@ -90,7 +99,9 @@ MAIL_SUPPORT_RECIPIENT=your_email
 - Authentication: register, login, logout, password reset
 - User profile management
 - Community forums (categories, posts, replies)
+- Admin panel with role-based authorization
 - Help/contact flows
+- Load testing for API performance validation
 
 ## 3) Testing Strategies and Results
 
@@ -150,6 +161,22 @@ Use these examples in Postman or browser dev tools:
    - Browser network tab showing response time for same endpoint on **deployed** URL.
    - **Local vs deployed comparison:** document latency difference.
 
+### Load testing for API endpoints
+
+Command:
+
+```bash
+python load_test.py
+```
+
+This script tests the `/api/chat` and `/api/predict-sensor` endpoints with concurrent requests to measure:
+- Response times (min, max, mean, median, 95th and 99th percentiles)
+- Requests per second throughput
+- Error rates and status code distribution
+- Performance under load (100 requests with 10 concurrent users by default)
+
+**Configuration:** Edit `load_test.py` to adjust `BASE_URL`, `NUM_REQUESTS`, and `CONCURRENT_USERS`.
+
 ## 4) Analysis
 
 - The app combines sensor recommendations, forums, and a chatbot in one place.
@@ -163,6 +190,10 @@ Use these examples in Postman or browser dev tools:
 - Added forums and chatbot: so users can learn and help each other.
 - Added tests: to catch bugs and verify everything still works.
 - Deployed the app online: live at https://ezasmart.online/ for public access.
+- Implemented admin panel: role-based authorization for platform moderation.
+- Added load testing: performance validation for API endpoints under concurrent load.
+- Added admin dashboard
+
 
 ## 6) Recommendations and Future Work
 
@@ -180,24 +211,13 @@ Use these examples in Postman or browser dev tools:
 - Local: `python app.py`
 - Production (recommended): `gunicorn app:app`
 
-### Deployment Plan (Production)
-
-**Service:** Render
-
-**Steps:**
-1. Push code to GitHub repo.
-2. Connect repo to deployment service.
-3. Set environment variables (`.env` config).
-4. Deploy and verify live URL.
-
-**Deployed URL:** `https://ezasmart.online/`
-
-## 8) Project Structure
+## 7) Project Structure
 
 - `app.py` main Flask app with routes, models, and AI integration
 - `chatbot.py` chatbot loader and inference helper
+- `load_test.py` load testing script for API endpoints
 - `tests/` automated tests (`test_api.py`, `test_auth.py`, `test_models.py`, `test_routes.py`)
-- `templates/` Jinja views
+- `templates/` Jinja views (includes `admin_dashboard.html` for admin panel)
 - `static/` CSS, JS, images, vendor assets
 - `Models/` model artifacts, notebooks, and datasets
 - `evidence/` test screenshots, deployment evidence, and demo video link
