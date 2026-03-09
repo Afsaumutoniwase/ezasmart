@@ -86,8 +86,53 @@
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-3 text-white rounded-md transition mt-4 text-lg font-semibold" style="background: linear-gradient(135deg, #28844b 0%, #1f6938 100%);" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Send Message</button>
+                <button type="submit" id="contactSubmitBtn" class="w-full py-3 text-white rounded-md transition mt-4 text-lg font-semibold" style="background: linear-gradient(135deg, #28844b 0%, #1f6938 100%);" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">Send Message</button>
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contactForm = document.querySelector('form[method="POST"]');
+            const submitBtn = document.getElementById('contactSubmitBtn');
+            
+            if (contactForm && submitBtn) {
+                contactForm.addEventListener('submit', function(e) {
+                    // Validate form fields
+                    const name = document.getElementById('name').value.trim();
+                    const email = document.getElementById('email').value.trim();
+                    const subject = document.getElementById('subject').value.trim();
+                    const message = document.getElementById('message').value.trim();
+                    
+                    if (!name || !email || !subject || !message) {
+                        e.preventDefault();
+                        alert('Please fill in all fields before submitting.');
+                        return false;
+                    }
+                    
+                    // Validate email format
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        e.preventDefault();
+                        alert('Please enter a valid email address.');
+                        return false;
+                    }
+
+                    // Prevent accidental double-click submits while keeping the button green.
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Sending...';
+                    submitBtn.style.background = 'linear-gradient(135deg, #28844b 0%, #1f6938 100%)';
+                    submitBtn.style.color = '#fff';
+
+                    // Failsafe in case the request is interrupted and page does not navigate.
+                    setTimeout(function() {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Send Message';
+                        submitBtn.style.background = 'linear-gradient(135deg, #28844b 0%, #1f6938 100%)';
+                        submitBtn.style.color = '#fff';
+                    }, 8000);
+                });
+            }
+        });
+    </script>
 {% endblock %}

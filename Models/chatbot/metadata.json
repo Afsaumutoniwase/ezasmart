@@ -1,10 +1,12 @@
 {
   "model_name": "Afsa20/Farmsmart_Growmate",
-  "total_pairs": 1104,
+  "total_pairs": 1015,
   "stackexchange_pairs": 115,
-  "wikipedia_pairs": 989,
-  "retrieval_threshold": 0.4,
+  "wikipedia_pairs": 1015,
+  "retrieval_threshold": 0.3,
   "tfidf_features": 5000,
-  "created_date": "2026-03-06 14:14:34",
-  "python_version": "3.12.12"
+  "created_date": "2026-03-09 10:24:43",
+  "python_version": "3.11.9",
+  "fix_applied": "v2_combined_text_vectorization",
+  "fix_description": "TF-IDF now trained on question+answer combined text for better semantic matching"
 }

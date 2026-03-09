@@ -66,8 +66,8 @@
       <div class="container">
         <div class="row justify-content-center" data-aos="zoom-out">
           <div class="col-xl-7 col-lg-9 text-center">
-            <h1>Never Tried Hydroponics? Start Here!</h1>
-            <p>Learn soil-free farming from scratch—no experience needed. Join a community of farmers, access step-by-step guides, and grow successfully with affordable AI tools that work with simple handheld meters.</p>
+            <h1>Never&nbsp;Tried&nbsp;Hydroponics?<br>Start Here!</h1>
+            <p>Learn soil-free farming from scratch, no experience needed. Join a community of farmers, access step-by-step guides, and grow successfully with affordable AI tools that work with simple handheld meters.</p>
           </div>
         </div>
         <div class="text-center" data-aos="zoom-out" data-aos-delay="100">
@@ -380,7 +380,7 @@
       <div class="container" data-aos="fade-up">
         <div style="margin-bottom: 2rem;">
           <input type="text" id="cropSearch" class="form-control" placeholder="Search crops by name..." 
-                 style="padding: 12px 15px; font-size: 1rem; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 8px;">
+                 style="padding: 12px 15px; font-size: 1rem; border: 2px solid rgba(114, 191, 120, 0.3); border-radius: 8px;" autocomplete="off">
         </div>
 
         <div style="overflow-x: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
@@ -687,7 +687,7 @@
           </div>
 
           <div class="col-lg-8">
-            <form method="POST" action="{{ url_for('send_contact_message') }}" class="php-email-form">
+            <form method="POST" action="{{ url_for('send_contact_message') }}" id="indexContactForm">
 
               <div class="row gy-4">
 
@@ -707,7 +707,7 @@
                   <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-green-500 text-white rounded-md hover:bg-blue-600 transition mt-4">Send Message</button>
+                <button type="submit" id="indexContactSubmitBtn" class="w-100 mt-4" style="background: linear-gradient(135deg, #28844b 0%, #1f6938 100%); color: #fff; border: none; border-radius: 8px; padding: 12px 16px; font-weight: 600;">Send Message</button>
                   
 
               </div>
@@ -795,7 +795,6 @@
 
   <!-- Vendor JS Files -->
   <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="../static/vendor/php-email-form/validate.js"></script>
   <script src="../static/vendor/aos/aos.js"></script>
   <script src="../static/vendor/purecounter/purecounter_vanilla.js"></script>
   <script src="../static/vendor/glightbox/js/glightbox.min.js"></script>
@@ -869,6 +868,80 @@
     </div>
   </div>
   <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Index.html Contact Form Validation
+      const indexContactForm = document.getElementById('indexContactForm');
+      const indexContactSubmitBtn = document.getElementById('indexContactSubmitBtn');
+      
+      if (indexContactForm && indexContactSubmitBtn) {
+        indexContactForm.addEventListener('submit', function(e) {
+          // Validate form fields
+          const name = this.querySelector('input[name="name"]').value.trim();
+          const email = this.querySelector('input[name="email"]').value.trim();
+          const subject = this.querySelector('input[name="subject"]').value.trim();
+          const message = this.querySelector('textarea[name="message"]').value.trim();
+          
+          if (!name || !email || !subject || !message) {
+            e.preventDefault();
+            alert('Please fill in all fields before submitting.');
+            return false;
+          }
+          
+          // Validate email format
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            e.preventDefault();
+            alert('Please enter a valid email address.');
+            return false;
+          }
+
+          // Prevent accidental double-click submits while keeping the button green.
+          indexContactSubmitBtn.disabled = true;
+          indexContactSubmitBtn.textContent = 'Sending...';
+          indexContactSubmitBtn.style.background = 'linear-gradient(135deg, #28844b 0%, #1f6938 100%)';
+          indexContactSubmitBtn.style.color = '#fff';
+
+          // Failsafe in case the request is interrupted and page does not navigate.
+          setTimeout(function() {
+            indexContactSubmitBtn.disabled = false;
+            indexContactSubmitBtn.textContent = 'Send Message';
+            indexContactSubmitBtn.style.background = 'linear-gradient(135deg, #28844b 0%, #1f6938 100%)';
+            indexContactSubmitBtn.style.color = '#fff';
+          }, 8000);
+        });
+      }
+      
+      // Crop Search Enhancement - improve UX with real-time search
+      const cropSearch = document.getElementById('cropSearch');
+      if (cropSearch) {
+        cropSearch.addEventListener('input', function(e) {
+          const searchTerm = e.target.value.toLowerCase().trim();
+          const rows = document.querySelectorAll('#cropTable tr');
+          let visibleCount = 0;
+          
+          rows.forEach(row => {
+            const cropName = row.textContent.toLowerCase();
+            if (searchTerm === '' || cropName.includes(searchTerm)) {
+              row.style.display = '';
+              visibleCount++;
+            } else {
+              row.style.display = 'none';
+            }
+          });
+          
+          // Show message if no results
+          if (visibleCount === 0 && searchTerm !== '') {
+            console.log('No crops found matching: ' + searchTerm);
+          }
+        });
+        
+        // Clear search on page load if there's cached value
+        cropSearch.value = '';
+      }
+    });
+  </script>     
 
 </body>
 

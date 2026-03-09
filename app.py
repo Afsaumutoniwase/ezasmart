@@ -9,6 +9,7 @@ from flask_login import login_user, LoginManager, UserMixin, current_user, login
 from flask import flash
 from flask_mail import Mail, Message
 import os
+import hashlib
 import joblib
 import numpy as np
 import pandas as pd
@@ -537,7 +538,14 @@ def account_settings():
             else:
                 current_user.set_password(new_password)
                 db.session.commit()
-                flash('Password updated successfully.', 'success')
+                
+                # Send password change confirmation email
+                try:
+                    send_password_changed_email(current_user)
+                except Exception as e:
+                    print(f"Warning: Failed to send password change email: {e}")
+                
+                flash('Password updated successfully. A confirmation email has been sent.', 'success')
 
         elif 'delete_profile' in request.form:
             db.session.delete(current_user)
@@ -591,12 +599,40 @@ def chat():
 def resources():   
     return render_template('resources.html', title="Resources")
 
+
+def _contact_fingerprint(name, email, subject, message):
+    """Create a stable fingerprint for contact payload deduplication."""
+    payload = "|".join([
+        (name or "").strip().lower(),
+        (email or "").strip().lower(),
+        (subject or "").strip().lower(),
+        (message or "").strip().lower(),
+    ])
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _is_duplicate_contact_submission(name, email, subject, message, window_seconds=20):
+    """Prevent duplicate sends caused by accidental double-submit."""
+    fingerprint = _contact_fingerprint(name, email, subject, message)
+    now_ts = datetime.utcnow().timestamp()
+    last_fp = session.get('last_contact_fingerprint')
+    last_ts = float(session.get('last_contact_timestamp', 0))
+
+    session['last_contact_fingerprint'] = fingerprint
+    session['last_contact_timestamp'] = now_ts
+
+    return last_fp == fingerprint and (now_ts - last_ts) < window_seconds
+
 @app.route('/help/contact', methods=['POST'])
 def send_support():
     name = request.form.get('name')
     email = request.form.get('email')
     subject = request.form.get('subject')
     message = request.form.get('message')
+
+    if _is_duplicate_contact_submission(name, email, subject, message):
+        flash('Duplicate submission detected. Please wait a moment before sending again.', 'info')
+        return redirect(url_for('help'))
 
     full_message = f"""
     Subject: {subject}
@@ -628,6 +664,10 @@ def send_contact_message():
     email = request.form.get('email')
     subject = request.form.get('subject', 'Contact Form Submission')
     message = request.form.get('message')
+
+    if _is_duplicate_contact_submission(name, email, subject, message):
+        flash('Duplicate submission detected. Please wait a moment before sending again.', 'info')
+        return redirect(url_for('home') + "#contact")
 
     full_message = f"""
     Subject: {subject}
