@@ -37,6 +37,7 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])
 app.config['MAIL_SUPPORT_RECIPIENT'] = os.getenv('MAIL_SUPPORT_RECIPIENT', app.config['MAIL_USERNAME'])
+app.config['APP_BASE_URL'] = os.getenv('APP_BASE_URL', '').strip().rstrip('/')
 
 db = SQLAlchemy(app)
 mail = Mail(app)
@@ -329,9 +330,20 @@ def send_email(subject, recipient, body_html, body_text=None):
         print(f"Error sending email: {e}")
         return False
 
+def build_app_url(endpoint, **values):
+    """Build absolute app URLs for emails, preferring configured deployment base URL."""
+    base_url = app.config.get('APP_BASE_URL')
+    if base_url:
+        path = url_for(endpoint, _external=False, **values)
+        if not path.startswith('/'):
+            path = f"/{path}"
+        return f"{base_url}{path}"
+    return url_for(endpoint, _external=True, **values)
+
 def send_welcome_email(user):
     """Send a welcome email to newly registered users"""
     subject = "Welcome to FarmSmart!"
+    dashboard_url = build_app_url('dashboard')
     html_body = f"""
     <html>
     <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -346,7 +358,7 @@ def send_welcome_email(user):
             </ul>
             <p>Get started by completing your profile and exploring our platform.</p>
             <p style="margin-top: 30px;">
-                <a href="{url_for('dashboard', _external=True)}" 
+                <a href="{dashboard_url}" 
                    style="background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
                     Go to Dashboard
                 </a>
@@ -362,7 +374,7 @@ def send_welcome_email(user):
 
 def send_password_reset_email(user, token):
     """Send password reset email with token"""
-    reset_url = url_for('reset_password', token=token, _external=True)
+    reset_url = build_app_url('reset_password', token=token)
     subject = "Password Reset Request - FarmSmart"
     html_body = f"""
     <html>
@@ -394,6 +406,7 @@ def send_password_reset_email(user, token):
 def send_password_changed_email(user):
     """Send confirmation email after password change"""
     subject = "Password Changed Successfully - FarmSmart"
+    login_url = build_app_url('login')
     html_body = f"""
     <html>
     <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
@@ -406,7 +419,7 @@ def send_password_changed_email(user):
                 <strong>If you didn't make this change, please contact our support team immediately.</strong>
             </p>
             <p style="margin-top: 30px;">
-                <a href="{url_for('login', _external=True)}" 
+                <a href="{login_url}" 
                    style="background-color: #28a745; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
                     Login to Your Account
                 </a>

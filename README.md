@@ -90,6 +90,7 @@ MAIL_USERNAME=your_email
 MAIL_PASSWORD=your_password
 MAIL_DEFAULT_SENDER=your_email
 MAIL_SUPPORT_RECIPIENT=your_email
+APP_BASE_URL=https://your-deployed-domain.com
 ```
 
 ## 2) Core Features Demonstrated
