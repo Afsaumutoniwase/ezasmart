@@ -120,6 +120,30 @@ class TestLogin:
         
         assert response.status_code == 200
 
+    def test_login_honors_safe_next_redirect(self, client, test_user):
+        """Test successful login redirects to safe next URL when provided."""
+        response = client.post('/login', data={
+            'form_type': 'login',
+            'email': 'test@example.com',
+            'password': 'testpassword123',
+            'next': '/dashboard'
+        }, follow_redirects=False)
+
+        assert response.status_code == 302
+        assert response.headers.get('Location', '').endswith('/dashboard')
+
+    def test_login_rejects_external_next_redirect(self, client, test_user):
+        """Test login ignores malicious external next URL and falls back safely."""
+        response = client.post('/login', data={
+            'form_type': 'login',
+            'email': 'test@example.com',
+            'password': 'testpassword123',
+            'next': 'https://evil.example.com/phish'
+        }, follow_redirects=False)
+
+        assert response.status_code == 302
+        assert '/forums' in response.headers.get('Location', '')
+
 
 class TestLogout:
     """Tests for user logout"""

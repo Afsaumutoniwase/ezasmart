@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 import json
 import secrets
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -340,6 +341,25 @@ def build_app_url(endpoint, **values):
         return f"{base_url}{path}"
     return url_for(endpoint, _external=True, **values)
 
+def get_safe_next_url(default_endpoint='forums'):
+    """Return a validated next URL from login flow, or a safe default endpoint."""
+    next_url = request.form.get('next') or request.args.get('next')
+    if not next_url:
+        return url_for(default_endpoint)
+
+    parsed = urlparse(next_url)
+    # Allow only relative URLs or same-host absolute URLs to prevent open redirects.
+    if parsed.scheme and parsed.netloc:
+        current_host = request.host.split(':')[0].lower()
+        target_host = parsed.netloc.split(':')[0].lower()
+        if current_host != target_host:
+            return url_for(default_endpoint)
+
+    if next_url.startswith('//'):
+        return url_for(default_endpoint)
+
+    return next_url
+
 def send_welcome_email(user):
     """Send a welcome email to newly registered users"""
     subject = "Welcome to FarmSmart!"
@@ -508,12 +528,12 @@ def login():
                 flash(f'Welcome back, {user.username}!', 'success')
                 if user.role == 'admin' or user.email == 'ezasmartonline@gmail.com':
                     return redirect(url_for('admin_dashboard'))
-                return redirect(url_for('forums'))
+                return redirect(get_safe_next_url(default_endpoint='forums'))
 
             flash("Invalid email or password. Please try again.", "error")
             return redirect(url_for('login'))
 
-    return render_template('login.html')
+    return render_template('login.html', next_url=request.args.get('next', ''))
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
@@ -1069,7 +1089,7 @@ def delete_post(post_id):
     db.session.delete(post)
     db.session.commit()
     flash('Post has been deleted.', 'success')
-    return redirect(url_for('category_view', category_id=category_id))
+    return redirect(url_for('view_category', category_id=category_id))
 
 @app.route('/logout')
 @login_required

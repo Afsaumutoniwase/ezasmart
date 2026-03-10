@@ -155,6 +155,28 @@ class TestForumsRoute:
             assert reply is not None
             assert reply.post_id == test_post
 
+    def test_delete_post_redirects_to_view_category(self, client, app, test_user, test_post):
+        """Test post deletion redirects to the existing category view endpoint."""
+        with app.app_context():
+            user = User.query.filter_by(email='test@example.com').first()
+            user.role = 'admin'
+            db.session.commit()
+
+            post = Post.query.get(test_post)
+            category_id = post.category_id
+
+        with client:
+            client.post('/login', data={
+                'form_type': 'login',
+                'email': 'test@example.com',
+                'password': 'testpassword123'
+            }, follow_redirects=True)
+
+            response = client.post(f'/admin/post/{test_post}/delete', follow_redirects=False)
+
+        assert response.status_code == 302
+        assert f'/category/{category_id}' in response.headers.get('Location', '')
+
 
 class TestResourcesRoute:
     """Tests for resources page"""

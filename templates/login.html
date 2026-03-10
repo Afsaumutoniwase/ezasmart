@@ -39,6 +39,7 @@
             <section id="login-form">
                 <form class="login-form" action="{{ url_for('login') }}" method="POST">
                     <input type="hidden" name="form_type" value="login"/>
+                    <input type="hidden" name="next" value="{{ next_url }}"/>
                     <input type="email" name="email" placeholder="email" required/>
                     <input type="password" name="password" placeholder="password" required/>
                     <button type="submit">login</button>
