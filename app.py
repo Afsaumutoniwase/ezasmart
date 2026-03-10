@@ -105,7 +105,7 @@ CROP_OPTIMAL_RANGES = {
     'Spinach': {'ec_min': 1.8, 'ec_max': 2.3, 'ph_min': 6.0, 'ph_max': 7.0},
     'Strawberry': {'ec_min': 1.8, 'ec_max': 2.2, 'ph_min': 6.0, 'ph_max': 6.0},
     'Sage': {'ec_min': 1.0, 'ec_max': 1.6, 'ph_min': 5.5, 'ph_max': 6.5},
-    'Tomato': {'ec_min': 2.0, 'ec_max': 4.0, 'ph_min': 6.0, 'ph_max': 6.5},
+    'Tomatoes': {'ec_min': 2.0, 'ec_max': 4.0, 'ph_min': 6.0, 'ph_max': 6.5},
 }
 
 def validate_sensor_input(data):

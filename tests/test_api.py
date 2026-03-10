@@ -18,7 +18,7 @@ class TestSensorPredictionAPI:
     def test_predict_sensor_with_valid_data(self, authenticated_client):
         """Test sensor prediction with valid data"""
         data = {
-            'crop_id': 'Tomato',
+            'crop_id': 'Tomatoes',
             'ph_level': 6.2,
             'ec_value': 2.5,
             'ambient_temp': 24.5
@@ -59,8 +59,8 @@ class TestSensorPredictionAPI:
     def test_predict_sensor_low_ph(self, authenticated_client):
         """Test prediction with pH too low"""
         data = {
-            'crop_id': 'Tomato',
-            'ph_level': 5.0,  # Too low for Tomato (optimal 6.0-6.5)
+            'crop_id': 'Tomatoes',
+            'ph_level': 5.0,  # Too low for Tomatoeses (optimal 6.0-6.5)
             'ec_value': 3.0,
             'ambient_temp': 24.0
         }
@@ -95,9 +95,9 @@ class TestSensorPredictionAPI:
     def test_predict_sensor_low_ec(self, authenticated_client):
         """Test prediction with EC too low"""
         data = {
-            'crop_id': 'Tomato',
+            'crop_id': 'Tomatoes',
             'ph_level': 6.2,
-            'ec_value': 1.0,  # Too low for Tomato (optimal 2.0-4.0)
+            'ec_value': 1.0,  # Too low for Tomatoeses (optimal 2.0-4.0)
             'ambient_temp': 24.0
         }
         
@@ -147,7 +147,7 @@ class TestSensorPredictionAPI:
     def test_predict_sensor_missing_ph(self, authenticated_client):
         """Test prediction with missing pH level"""
         data = {
-            'crop_id': 'Tomato',
+            'crop_id': 'Tomatoes',
             'ec_value': 2.0,
             'ambient_temp': 24.0
         }
@@ -163,7 +163,7 @@ class TestSensorPredictionAPI:
     def test_predict_sensor_missing_ec(self, authenticated_client):
         """Test prediction with missing EC value"""
         data = {
-            'crop_id': 'Tomato',
+            'crop_id': 'Tomatoes',
             'ph_level': 6.5,
             'ambient_temp': 24.0
         }
@@ -179,7 +179,7 @@ class TestSensorPredictionAPI:
     def test_predict_sensor_missing_temperature(self, authenticated_client):
         """Test prediction with missing temperature"""
         data = {
-            'crop_id': 'Tomato',
+            'crop_id': 'Tomatoes',
             'ph_level': 6.5,
             'ec_value': 2.0
         }
@@ -210,7 +210,7 @@ class TestSensorPredictionAPI:
     def test_predict_sensor_zero_values(self, authenticated_client):
         """Test prediction with zero values"""
         data = {
-            'crop_id': 'Tomato',
+            'crop_id': 'Tomatoes',
             'ph_level': 0,
             'ec_value': 0,
             'ambient_temp': 0
@@ -282,7 +282,7 @@ class TestCropRangesData:
         """Test that CROP_OPTIMAL_RANGES has expected crops"""
         from app import CROP_OPTIMAL_RANGES
         
-        assert 'Tomato' in CROP_OPTIMAL_RANGES
+        assert 'Tomatoes' in CROP_OPTIMAL_RANGES
         assert 'Lettuce' in CROP_OPTIMAL_RANGES
         assert 'Basil' in CROP_OPTIMAL_RANGES
         assert 'Cucumber' in CROP_OPTIMAL_RANGES
