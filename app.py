@@ -633,6 +633,12 @@ def forums():
     categories = Category.query.all()
     return render_template('forums.html', categories=categories)
 
+@app.route('/forums/all')
+@login_required
+def all_discussions():
+    posts = Post.query.order_by(Post.created_at.desc()).all()
+    return render_template('all_discussions.html', posts=posts)
+
 @app.route('/category/<int:category_id>')
 @login_required
 def view_category(category_id):

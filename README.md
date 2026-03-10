@@ -116,7 +116,7 @@ pytest -q
 
 Latest run result:
 
-- `87 passed`
+- `90 passed`
 - `0 failed`
 - Runtime: `29.38s`
 
@@ -144,7 +144,7 @@ Use these examples in Postman or browser dev tools:
 **Screenshots to capture (store in `evidence/` folder):**
 
 1. **Test suite run:**
-   - Terminal showing `pytest -q` output: `87 passed, 0 failed` in `29.38s`
+   - Terminal showing `pytest -q` output: `90 passed, 0 failed` in `25.98s`
 
 2. **Sensor API functional tests** (use Postman, browser console, or curl):
    - Request/response for **valid case** (Maintain expected):

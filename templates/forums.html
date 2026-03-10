@@ -13,12 +13,17 @@
                     Connect with Fellow Farmers—Share Your Experiences & Learn Together</p>
                 <p class="text-base mt-2 text-gray-600 max-w-3xl mx-auto">
                     Ask questions, share what you've learned, troubleshoot problems together, and help other farmers on their hydroponic journey. Every farmer's experience helps the community grow!</p>
+                <div class="mt-4">
+                    <a href="{{ url_for('all_discussions') }}" class="inline-flex items-center gap-2 text-white py-2 px-6 rounded-full font-semibold transition duration-300 ease-in-out no-underline shadow-md" style="background: linear-gradient(135deg, #28844b 0%, #1f6938 100%);" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        View All Discussions
+                    </a>
+                </div>
             </div>
         </div>
 
         <!-- Forum Categories -->
         <div class="mb-4">
-           
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 {% for category in categories %}
                     <div class="bg-white shadow-lg rounded-md p-5 hover:shadow-xl transition duration-300 ease-in-out" style="border: 1px solid #A2CA71;">
@@ -32,8 +37,6 @@
                                 View Posts
                             </a>
                         </div>
-                        
-                        
                     </div>
                 {% endfor %}
             </div>
