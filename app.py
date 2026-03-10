@@ -139,6 +139,8 @@ def validate_sensor_input(data):
         return False, "ec_value must be between 0.1 and 10 mS/cm (typical range: 0.5-5)", None
     
     # Validate ambient temperature
+    if 'ambient_temp' not in data or data.get('ambient_temp') is None or data.get('ambient_temp') == '':
+        return False, "ambient_temp is required", None
     try:
         ambient_temp = float(data.get('ambient_temp', 0))
     except (ValueError, TypeError):
