@@ -3,7 +3,7 @@
 **Quick Links:**
 - **Deployed App:** https://ezasmart.online/
 - **GitHub:** https://github.com/Afsaumutoniwase/ezasmart
-- **Demo Video:** [Add link after recording]
+- **Demo Video:** https://drive.google.com/file/d/1UWVT_q1MXjVbq5VU2VdWjat5wV8hxypx/view?usp=sharing
 
 ## Overview
 
@@ -141,11 +141,9 @@ Use these examples in Postman or browser dev tools:
 
 ### Performance testing across software/hardware conditions
 
-**Screenshots to capture (store in `evidence/` folder):**
-
 1. **Test suite run:**
    - Terminal showing `pytest -q` output: `90 passed, 0 failed` in `25.98s`
-
+![alt text](evidence/01_pytest_run.png)
 2. **Sensor API functional tests** (use Postman, browser console, or curl):
    - Request/response for **valid case** (Maintain expected):
      - Input: `crop_id=Lettuce, ph_level=6.5, ec_value=1.5, ambient_temp=22`
