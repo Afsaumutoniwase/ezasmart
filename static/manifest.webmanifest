@@ -1,0 +1,21 @@
+{
+  "name": "EzaSmart Hydroponics Support",
+  "short_name": "EzaSmart",
+  "description": "Hydroponics learning, crop guidance, and AI support with limited offline access.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5fbf6",
+  "theme_color": "#1f7a3d",
+  "icons": [
+    {
+      "src": "/static/img/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/img/loader.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

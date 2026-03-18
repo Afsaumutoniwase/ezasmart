@@ -4,12 +4,15 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <meta name="theme-color" content="#1f7a3d">
   <title>EzaSmart</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 
   <!-- Favicons -->
   <link rel="icon" href="{{ url_for('static', filename='img/loader.png') }}" type="image/x-icon">
+  <link rel="manifest" href="{{ url_for('web_manifest') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
 
   <link href="../static/img/favicon.png" rel="icon">
   <link href="../static/img/apple-touch-icon.png" rel="apple-touch-icon">
@@ -672,7 +675,7 @@
               <i class="bi bi-telephone flex-shrink-0"></i>
               <div>
                 <h3>Call Us</h3>
-                <p>+250787244444</p>
+                <p>+250787249888</p>
               </div>
             </div><!-- End Info Item -->
 
@@ -771,7 +774,7 @@
 
           <p>Kigali, Rwanda</p>
 
-          <p class="mt-4"><strong>Phone:</strong> <span>+250787244444</span></p>
+          <p class="mt-4"><strong>Phone:</strong> <span>+250787249888</span></p>
           <p><strong>Email:</strong> <span>ezasmartonline@gmail.com</span></p>
 
         </div>
@@ -868,6 +871,7 @@
     </div>
   </div>
   <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {

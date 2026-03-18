@@ -5,7 +5,7 @@ import random
 import re
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import render_template, Flask, request, redirect, url_for, session, jsonify, abort
+from flask import render_template, Flask, request, redirect, url_for, session, jsonify, abort, send_from_directory
 from flask_login import login_user, LoginManager, UserMixin, current_user, login_required, logout_user
 from flask import flash
 from flask_mail import Mail, Message
@@ -455,6 +455,18 @@ def send_password_changed_email(user):
 @app.route('/')
 def home():
     return render_template('index.html', crop_ranges=CROP_OPTIMAL_RANGES)
+
+
+@app.route('/manifest.webmanifest')
+def web_manifest():
+    return send_from_directory(app.static_folder, 'manifest.webmanifest', mimetype='application/manifest+json')
+
+
+@app.route('/service-worker.js')
+def service_worker():
+    response = send_from_directory(app.static_folder, 'service-worker.js', mimetype='application/javascript')
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
 
 @login_manager.user_loader
 def load_user(user_id):

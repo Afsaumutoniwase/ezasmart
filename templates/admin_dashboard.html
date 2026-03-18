@@ -203,12 +203,20 @@
 </style>
 </head>
 <body>
-    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     
     <div class="admin-container">    
     <div class="admin-header">
-        <h1>Admin Dashboard</h1>
-        <p>Manage users, roles, and monitor platform activity</p>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <a href="{{ url_for('home') }}" style="display:flex; align-items:center;">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FarmSmart Logo" style="height:100px; width:100px; margin-right:12px; cursor:pointer;">
+            </a>
+            <div style="flex:1; text-align:center;">
+                <h1 style="margin:0; font-size:2rem;">Admin Dashboard</h1>
+                <p style="margin:0; font-size:1rem;">Manage users, roles, and monitor platform activity</p>
+            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn" style="position:static; background:white; color:#387F39;">Logout</a>
+        </div>
+
     </div>
     
     {% include 'flash_messages.html' %}

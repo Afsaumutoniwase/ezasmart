@@ -44,7 +44,12 @@ Manual monitoring of EC, pH, and temperature is time-consuming and error-prone. 
    - Learning materials on hydroponics
    - Contact form for support
 
-6. **Admin Panel**
+6. **Partial Offline Support**
+   - Installable web app shell via manifest and service worker
+   - Previously visited pages and cached assets remain available offline
+   - Offline fallback page explains which features need reconnection
+
+7. **Admin Panel**
    - Role-based authorization (admin and moderator roles)
    - User management (view, update roles, delete users)
    - Post moderation (delete posts and replies)
@@ -58,6 +63,7 @@ Manual monitoring of EC, pH, and temperature is time-consuming and error-prone. 
 - **Database**: SQLite (local), deployed on PostgreSQL
 - **Authentication**: Flask-Login with token-based password reset
 - **Frontend**: Jinja2 templates, Bootstrap, vanilla JavaScript
+- **Offline Shell**: Web App Manifest + Service Worker for partial offline access
 
 ## 1) Install and Run (Step by Step)
 
@@ -101,8 +107,9 @@ APP_BASE_URL=https://your-deployed-domain.com
 - User profile management
 - Community forums (categories, posts, replies)
 - Admin panel with role-based authorization
+- Partial offline support for cached pages and app assets
 - Help/contact flows
-- Load testing for API performance validation
+- Browser-based performance validation for local and deployed endpoints
 
 ## 3) Testing Strategies and Results
 
@@ -118,11 +125,11 @@ Latest run result:
 
 - `90 passed`
 - `0 failed`
-- Runtime: `29.38s`
+- Runtime: `25.98s`
 
 Test Results:
 
-- All features work as expected (87 passing tests).
+- All features work as expected (90 passing tests).
 - The same tests pass on both local and deployed versions.
 - No failures or regressions detected.
 
@@ -133,11 +140,18 @@ Use these examples in Postman or browser dev tools:
 - Valid case (`Maintain` expected for optimal range):
   - `crop_id=Lettuce, ph_level=6.5, ec_value=1.5, ambient_temp=22`
 - Low pH case (`Add_pH_Up` expected):
-  - `crop_id=Tomato, ph_level=5.0, ec_value=3.0, ambient_temp=24`
+   - `crop_id=Tomatoes, ph_level=5.0, ec_value=3.0, ambient_temp=24`
 - High EC case (`Dilute` expected):
   - `crop_id=Lettuce, ph_level=6.5, ec_value=3.0, ambient_temp=22`
 - Validation case (`400` expected):
   - Missing `crop_id` or `ph_level`
+
+### Partial offline support
+
+- The app now includes partial offline support through a service worker and manifest.
+- Previously visited pages and cached app assets can reopen without a connection.
+- Live features remain online-only: `/api/predict-sensor`, `/api/chat`, login/session actions, forum updates, and admin actions.
+- When the network is unavailable, the app serves an offline fallback page or a clear API error message.
 
 ### Performance testing across software/hardware conditions
 
@@ -149,32 +163,16 @@ Use these examples in Postman or browser dev tools:
      - Input: `crop_id=Lettuce, ph_level=6.5, ec_value=1.5, ambient_temp=22`
      - Expected response: `{"action": "Maintain", ...}`
    - Request/response for **low pH case** (Add_pH_Up expected):
-     - Input: `crop_id=Tomato, ph_level=5.0, ec_value=3.0, ambient_temp=24`
+       - Input: `crop_id=Tomatoes, ph_level=5.0, ec_value=3.0, ambient_temp=24`
      - Expected response: `{"action": "Add_pH_Up", ...}`
    - Request/response for **high EC case** (Dilute expected):
      - Input: `crop_id=Lettuce, ph_level=6.5, ec_value=3.0, ambient_temp=22`
      - Expected response: `{"action": "Dilute", ...}`
 
 3. **Performance/deployment evidence:**
-   - Browser network tab showing response time for `/api/predict-sensor` on **local** machine.
-   - Browser network tab showing response time for same endpoint on **deployed** URL.
-   - **Local vs deployed comparison:** document latency difference.
-
-### Load testing for API endpoints
-
-Command:
-
-```bash
-python load_test.py
-```
-
-This script tests the `/api/chat` and `/api/predict-sensor` endpoints with concurrent requests to measure:
-- Response times (min, max, mean, median, 95th and 99th percentiles)
-- Requests per second throughput
-- Error rates and status code distribution
-- Performance under load (100 requests with 10 concurrent users by default)
-
-**Configuration:** Edit `load_test.py` to adjust `BASE_URL`, `NUM_REQUESTS`, and `CONCURRENT_USERS`.
+    - Browser network tab showing response time for `/api/predict-sensor` on the local machine.
+    - Browser network tab showing response time for `/api/predict-sensor` or `/api/chat` on the deployed URL.
+    - Current evidence screenshots available in `evidence/` include local performance captures.
 
 ## 4) Analysis
 
@@ -190,7 +188,8 @@ This script tests the `/api/chat` and `/api/predict-sensor` endpoints with concu
 - Added tests: to catch bugs and verify everything still works.
 - Deployed the app online: live at https://ezasmart.online/ for public access.
 - Implemented admin panel: role-based authorization for platform moderation.
-- Added load testing: performance validation for API endpoints under concurrent load.
+- Added partial offline support for cached pages and app shell assets.
+- Added browser-based performance validation for API endpoints.
 - Added admin dashboard
 
 
@@ -198,6 +197,7 @@ This script tests the `/api/chat` and `/api/predict-sensor` endpoints with concu
 
 - Add observability (request logs, error rates, latency dashboard).
 - Extend model retraining pipeline with more recent hydroponics datasets.
+- Add offline form draft storage and sync-after-reconnect for sensor entries.
 
 ## 7) Deployment
 
@@ -210,11 +210,16 @@ This script tests the `/api/chat` and `/api/predict-sensor` endpoints with concu
 - Local: `python app.py`
 - Production (recommended): `gunicorn app:app`
 
+### Offline support notes
+
+- `/manifest.webmanifest` and `/service-worker.js` enable partial offline support.
+- Cached pages can reopen offline after the user has visited them once while online.
+- API-powered features still require connectivity.
+
 ## 7) Project Structure
 
 - `app.py` main Flask app with routes, models, and AI integration
 - `chatbot.py` chatbot loader and inference helper
-- `load_test.py` load testing script for API endpoints
 - `tests/` automated tests (`test_api.py`, `test_auth.py`, `test_models.py`, `test_routes.py`)
 - `templates/` Jinja views (includes `admin_dashboard.html` for admin panel)
 - `static/` CSS, JS, images, vendor assets

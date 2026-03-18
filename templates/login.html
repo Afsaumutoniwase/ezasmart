@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1f7a3d">
     <title>Login/Signup</title>
+  <link rel="manifest" href="{{ url_for('web_manifest') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
     <link rel="stylesheet" href="../static/css/login.css">
     <link rel="icon" href="{{ url_for('static', filename='img/loader.png') }}" type="image/x-icon">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -17,7 +20,9 @@
 
         <div class="form">
             <div class="flex justify-center mb-6">
-                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="EzaSmart Logo" class="h-5">
+                <a href="{{ url_for('home') }}">
+                  <img src="{{ url_for('static', filename='img/logo.png') }}" alt="EzaSmart Logo" class="h-5" style="cursor:pointer;">
+                </a>
             </div>
             <section id="register-form">
                 <form class="register-form" action="{{ url_for('login') }}" method="POST">
@@ -71,5 +76,6 @@
     </div>
   </div>
   <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pwa.js') }}"></script>
 </body>
 </html>

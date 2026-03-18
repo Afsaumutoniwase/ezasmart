@@ -22,6 +22,18 @@ class TestHomeRoute:
         assert response.status_code == 200
         assert b'Tomato' in response.data or b'Lettuce' in response.data or b'Basil' in response.data
 
+    def test_manifest_is_available(self, client):
+        """Test that the web app manifest is served"""
+        response = client.get('/manifest.webmanifest')
+        assert response.status_code == 200
+        assert b'short_name' in response.data
+
+    def test_service_worker_is_available(self, client):
+        """Test that the service worker script is served"""
+        response = client.get('/service-worker.js')
+        assert response.status_code == 200
+        assert b'CACHE_NAME' in response.data
+
 
 class TestDashboardRoute:
     """Tests for the dashboard route"""

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f7a3d">
+    <title>EzaSmart Offline</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(180deg, #f5fbf6 0%, #e3f3e7 100%);
+            color: #173d22;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .offline-card {
+            max-width: 560px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(31, 122, 61, 0.12);
+            text-align: center;
+        }
+
+        .offline-card img {
+            width: 84px;
+            height: 84px;
+            object-fit: contain;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            font-size: 2rem;
+        }
+
+        p {
+            margin: 0 0 14px;
+            line-height: 1.6;
+        }
+
+        .note {
+            background: #eef8f0;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: left;
+        }
+
+        .actions {
+            margin-top: 22px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        a,
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        a {
+            background: #1f7a3d;
+            color: #ffffff;
+        }
+
+        button {
+            background: #e7efe9;
+            color: #173d22;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <img src="/static/img/logo.png" alt="EzaSmart logo">
+        <h1>You're offline</h1>
+        <p>EzaSmart can still show cached pages and learning content you already opened, but live AI analysis, login, forums, and chatbot requests need an internet connection.</p>
+        <div class="note">
+            <p><strong>Available offline:</strong> previously visited pages and cached app assets.</p>
+            <p><strong>Needs connection:</strong> sensor predictions, chatbot replies, account actions, and forum updates.</p>
+        </div>
+        <div class="actions">
+            <button type="button" onclick="window.location.reload()">Try again</button>
+            <a href="/">Go to home page</a>
+        </div>
+    </div>
+</body>
+</html>
