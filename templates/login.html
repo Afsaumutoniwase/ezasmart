@@ -8,9 +8,10 @@
     <title>Login/Signup</title>
   <link rel="manifest" href="{{ url_for('web_manifest') }}">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
-    <link rel="stylesheet" href="../static/css/login.css">
+    <link rel="stylesheet" href="../static/css/login.css?v=2">
     <link rel="icon" href="{{ url_for('static', filename='img/loader.png') }}" type="image/x-icon">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- <script src="{{ url_for('static', filename='js/privacy_policy.js') }}?v=2"></script> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
 </head>
 <body>
@@ -37,6 +38,14 @@
                         <option value="Female">Female</option>
                     </select>
 
+                      <div class="privacy-policy-row">
+                        <input type="checkbox" id="privacy_policy" name="privacy_policy" required class="privacy-policy-checkbox" /> 
+                        <label for="privacy_policy" class="privacy-policy-label">
+                          I hereby confirm that I have read and agree with the
+                          <a href="https://docs.google.com/document/d/1Msbvb8TlV-20hu07iBT3J-ytbh48qHp5ML1MnAPrllw/edit?usp=sharing" target="_blank" style="text-decoration: underline; color: #1976d2;">Privacy Policy</a>.
+                        </label>
+                      </div>
+
                     <button type="submit">create</button>
                     <p class="message">Already registered? <a href="#login-form">Sign In</a></p>
                 </form>
@@ -58,6 +67,30 @@
     $('.message a').click(function(){
     $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
  });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('privacy_policy');
+
+    if (!checkbox) {
+        console.log('Checkbox NOT found');
+        return;
+    }
+
+    console.log('Checkbox found');
+
+    // Set initial color
+    // updateCheckboxColor();
+
+    checkbox.addEventListener('change', function() {
+        console.log('Checkbox changed. Checked:', checkbox.checked);
+        // updateCheckboxColor();
+    });
+
+    // function updateCheckboxColor() {
+    //     checkbox.style.accentColor = checkbox.checked ? '#28a745' : '#1976d2';
+    // }
+});
 </script>
   <div id="chatbot-widget" class="chatbot-widget">
     <button class="chatbot-toggle" aria-label="Open chat" title="Chat with EzaSmart AI Assistant">
