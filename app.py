@@ -272,6 +272,34 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(255), nullable=True)
+
+class SensorReading(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    crop_id = db.Column(db.String(100), nullable=False)
+    ph_level = db.Column(db.Float, nullable=False)
+    ec_value = db.Column(db.Float, nullable=False)
+    ambient_temp = db.Column(db.Float, nullable=False)
+    action = db.Column(db.String(100), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('sensor_readings', lazy=True))
+
+    def __repr__(self):
+        return f'<SensorReading {self.id} user={self.user_id} crop={self.crop_id}>'
+
+
+class ChatMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    user_message = db.Column(db.Text, nullable=False)
+    bot_response = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('chat_messages', lazy=True))
+
+    def __repr__(self):
+        return f'<ChatMessage {self.id} user={self.user_id}>'
     
     def __repr__(self):
         return f'<Category {self.name}>'
@@ -768,6 +796,20 @@ def chat():
             from chatbot import get_chatbot
             chatbot = get_chatbot()
             response = chatbot.chat(message)
+
+            # Save chat message in DB for history and analysis
+            try:
+                chat_msg = ChatMessage(
+                    user_id=current_user.id if current_user and not current_user.is_anonymous else None,
+                    user_message=message,
+                    bot_response=response
+                )
+                db.session.add(chat_msg)
+                db.session.commit()
+            except Exception as db_error:
+                db.session.rollback()
+                print(f"Failed to save chat message: {db_error}")
+
             return jsonify({'response': response}), 200
         except ImportError as ie:
             print(f"Chatbot import error: {ie}")
@@ -964,7 +1006,44 @@ def predict_sensor():
             ec_min=ec_min,
             ec_max=ec_max
         )
-        
+
+        # Store sensor reading in database (simple dedup: skip if exact duplicate within 3 seconds)
+        try:
+            user_id = current_user.id if current_user and not current_user.is_anonymous else None
+            
+            # Check for recent identical reading
+            last_reading = SensorReading.query.filter_by(user_id=user_id).order_by(
+                SensorReading.created_at.desc()
+            ).first()
+            
+            is_duplicate = False
+            if last_reading:
+                # Check if this is an exact duplicate (including action)
+                if (last_reading.crop_id == crop_id and 
+                    abs(float(last_reading.ph_level) - float(ph_level)) < 0.01 and
+                    abs(float(last_reading.ec_value) - float(ec_value)) < 0.01 and
+                    abs(float(last_reading.ambient_temp) - float(ambient_temp)) < 0.1 and
+                    last_reading.action == action):
+                    # Check if it's within 3 seconds
+                    delta = datetime.utcnow() - last_reading.created_at
+                    if delta.total_seconds() < 3:
+                        is_duplicate = True
+            
+            if not is_duplicate:
+                reading = SensorReading(
+                    user_id=user_id,
+                    crop_id=crop_id,
+                    ph_level=ph_level,
+                    ec_value=ec_value,
+                    ambient_temp=ambient_temp,
+                    action=action,
+                )
+                db.session.add(reading)
+                db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"Failed to save sensor reading: {e}")
+
         return jsonify({
             'success': True,
             'action': action,
@@ -1032,6 +1111,12 @@ def generate_crop_specific_recommendation(action, crop, ph_level, ec_value, ph_m
 @login_required
 def dashboard():
     return render_template("dashboard.html")
+
+@app.route('/sensor-history')
+@login_required
+def sensor_history():
+    readings = SensorReading.query.filter_by(user_id=current_user.id).order_by(SensorReading.created_at.desc()).all()
+    return render_template('sensor_history.html', readings=readings)
 
 @app.route('/admin')
 @admin_required

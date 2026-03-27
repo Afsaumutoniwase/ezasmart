@@ -17,7 +17,7 @@
     const inputEl = widget.querySelector('.chatbot-input');
     const sendBtn = widget.querySelector('.chatbot-send');
 
-    const welcomeMsg = "Welcome. I am your EzaSmart hydroponics assistant.\n\nAsk about pH, EC, nutrients, crops, or troubleshooting.";
+    const welcomeMsg = "Hello! I'm EzaSmart, an AI hydroponics assistant.\n\nI can help you with questions about pH, EC, nutrients, crops, and troubleshooting.\n\n⚠️ IMPORTANT:\n\nI'm an AI providing guidance based on scientific models. Final decisions about your farm remain with you.\n\n\n\nFeel free to ask me anything about hydroponics!";
 
     function togglePanel() {
       const isOpening = !panel.classList.contains('open');

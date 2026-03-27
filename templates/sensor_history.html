@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Sensor History{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-4 px-4">
+    <div class="py-4 rounded-2xl shadow-lg mb-6" style="background: linear-gradient(135deg, #28844b 0%, #72BF78 100%);">
+        <div class="text-center py-2">
+            <h1 class="text-4xl font-extrabold text-white">Sensor History</h1>
+            <p class="text-lg mt-2 text-white">All your past readings and AI recommendations.</p>
+        </div>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6">
+        {% if readings %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">pH</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EC</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Temp</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for r in readings %}
+                    <tr>
+                        <td class="px-4 py-2 text-sm text-gray-700">{{ r.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">{{ r.crop_id }}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">{{ r.ph_level }}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">{{ r.ec_value }}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">{{ r.ambient_temp }}</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">{{ r.action }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-600">No sensor readings found yet. Try analyzing your first reading from the Hydroponic dashboard.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

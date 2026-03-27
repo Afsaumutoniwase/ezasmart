@@ -19,7 +19,6 @@ window.addEventListener('load', function() {
 
 // ===== SENSOR MONITORING FUNCTIONALITY =====
 
-// Handle sensor form submission
 document.addEventListener('DOMContentLoaded', function() {
     const sensorForm = document.getElementById('sensor-form');
     
@@ -32,12 +31,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const phLevel = document.getElementById('ph-level').value;
             const ecValue = document.getElementById('ec-value').value;
             const temp = document.getElementById('temp').value;
+            const submitBtn = document.getElementById('sensor-submit-btn');
             
             // Validate inputs
             if (!cropId || !phLevel || !ecValue || !temp) {
                 showSensorError('Please fill in all required fields.');
                 return;
             }
+            
+            // Disable submit button to prevent double clicks
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.cursor = 'not-allowed';
             
             // Show loading, hide previous results
             showSensorLoading();
@@ -67,10 +72,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     // Show error
                     showSensorError(data.error || 'Failed to analyze sensor data. Please try again.');
+                    
+                    // Re-enable button on error
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.style.cursor = 'pointer';
                 }
             } catch (error) {
                 console.error('Error:', error);
                 showSensorError('An error occurred while connecting to the server. Please check your connection and try again.');
+                
+                // Re-enable button on error
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
             } finally {
                 hideSensorLoading();
             }

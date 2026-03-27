@@ -22,13 +22,13 @@
                     <i class="bi bi-camera-fill mr-2"></i>
                     Change Photo
                 </label>
-                <input type="file" id="profile_image" name="profile_image" accept="image/*" class="hidden" onchange="previewImage(event)">
             </div>
         </div>
     </div>
 
     <!-- Editable Profile Form -->
     <form method="POST" action="{{ url_for('profile') }}" enctype="multipart/form-data" class="space-y-5">
+        <input type="file" id="profile_image" name="profile_image" accept="image/*" class="hidden" onchange="previewImage(event)">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div class="space-y-2">
                 <label for="username" class="text-base font-semibold" style="color: #387F39;">Username</label>
@@ -70,16 +70,16 @@
 </div>
 
 <script>
-function previewImage(event) {
-    const input = event.target;
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('profileImagePreview').src = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
+    function previewImage(event) {
+        const input = event.target;
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profileImagePreview').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     }
-}
 </script>
 
 {% endblock %}

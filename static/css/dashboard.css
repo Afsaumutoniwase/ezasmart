@@ -1,7 +1,7 @@
   :root {
     --bg-color: #ecfccb;           
     --secondary-bg-color: #fff9f9;           
-    --sidebar-header-height: 100px;
+    --sidebar-header-height: 80px;
     --sidebar-footer-height: 230px;
     --text-color: #444444;              
     --secondary-text-color: #444444;      
@@ -55,9 +55,10 @@
     font-size: 1.5em;
     font-weight: bold;
     padding: 10px;
+    margin-bottom: 25px;
 }
 .sidebar-header a img {
-  max-width: 82%; /* Adjust the size as needed */
+  max-width: 50%; 
   height: auto;
 }
 
@@ -65,9 +66,10 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    padding: 5px 0;
+    padding: 20px 0 8px 0;
     gap: 10px;
-    justify-content: space-evenly;
+    margin-top: 10px;
+    justify-content: flex-start;
 }
 
 .sidebar-menu a {

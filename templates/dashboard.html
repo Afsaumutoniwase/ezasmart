@@ -18,7 +18,10 @@
                         Smart Nutrient Analysis
                     </h2>
                     <p class="text-gray-600 text-xl max-w-3xl mx-auto leading-relaxed">
-                        <strong>Started your hydroponic system?</strong> Great! Use your affordable handheld pH and EC meters to take readings, enter them below, and get professional-level recommendations instantly—<strong>no expensive equipment required!</strong>
+                        <strong>Started your hydroponic system?</strong> Great! Use your affordable handheld pH and EC meters to take readings, enter them below, and get professional-level recommendations instantly <strong>no expensive equipment required!</strong>
+                    </p>
+                    <p class="text-gray-500 text-lg max-w-3xl mx-auto leading-relaxed mt-4">
+                        <em>EzaSmart provides guidance based on scientific models. Final decisions remain with you.</em>
                     </p>
                 </div>
 
@@ -69,7 +72,6 @@
                                 />
                                 <i class="bi bi-percent absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                             </div>
-                            <span class="text-base text-gray-500 mt-1 block">Optimal: 5.5 - 6.5</span>
                         </div>
 
                         <!-- EC Value -->
@@ -112,7 +114,6 @@
                                 />
                                 <i class="bi bi-thermometer absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                             </div>
-                            <span class="text-base text-gray-500 mt-1 block">Optimal: 18 - 26°C</span>
                         </div>
                     </div>
 
@@ -211,6 +212,9 @@
             </a>
             <a href="{{ url_for('help') }}" class="inline-flex items-center px-4 py-2 rounded-lg transition no-underline" style="background-color: #f8fdf9; color: #387F39; border: 1px solid #A2CA71;" onmouseover="this.style.backgroundColor='#e8f5e9'" onmouseout="this.style.backgroundColor='#f8fdf9'">
                 <i class="bi bi-question-circle-fill mr-2"></i> Help
+            </a>
+            <a href="/sensor-history" class="inline-flex items-center px-4 py-2 rounded-lg transition no-underline" style="background-color: #f8fdf9; color: #387F39; border: 1px solid #A2CA71;" onmouseover="this.style.backgroundColor='#e8f5e9'" onmouseout="this.style.backgroundColor='#f8fdf9'">
+                <i class="bi bi-clipboard-data-fill mr-2"></i> Sensor History
             </a>
         </div>
     </div>
