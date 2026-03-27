@@ -59,19 +59,6 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-def moderator_required(f):
-    """Decorator to require admin or moderator role for access"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated:
-            flash('Please log in to access this page.', 'warning')
-            return redirect(url_for('login'))
-        if current_user.role not in ['admin', 'moderator']:
-            flash('You do not have permission to access this page.', 'danger')
-            return abort(403)
-        return f(*args, **kwargs)
-    return decorated_function
-
 SENSOR_MODEL_PATH = os.path.join(os.path.dirname(__file__), 'Models', 'ai_nutrient_analysis')
 sensor_model = None
 feature_scaler = None
@@ -1116,7 +1103,14 @@ def dashboard():
 @login_required
 def sensor_history():
     readings = SensorReading.query.filter_by(user_id=current_user.id).order_by(SensorReading.created_at.desc()).all()
-    return render_template('sensor_history.html', readings=readings)
+    unique = {}
+    for r in readings:
+        key = (r.crop_id, round(r.ph_level, 2), round(r.ec_value, 2), round(r.ambient_temp, 1))
+        if key not in unique:
+            unique[key] = r
+    unique_readings = list(unique.values())
+    unique_readings.sort(key=lambda r: r.created_at, reverse=True)
+    return render_template('sensor_history.html', readings=unique_readings)
 
 @app.route('/admin')
 @admin_required
@@ -1129,19 +1123,18 @@ def admin_dashboard():
     
     # Count users by role
     admins = User.query.filter_by(role='admin').count()
-    moderators = User.query.filter_by(role='moderator').count()
     regular_users = User.query.filter(User.role.in_([None, '', 'user'])).count()
     
+    categories = Category.query.all()
     stats = {
         'total_users': total_users,
         'admins': admins,
-        'moderators': moderators,
         'regular_users': regular_users,
         'total_posts': total_posts,
         'total_replies': total_replies
     }
-    
-    return render_template('admin_dashboard.html', users=users, stats=stats)
+    posts = Post.query.order_by(Post.created_at.desc()).all()
+    return render_template('admin_dashboard.html', users=users, stats=stats, categories=categories, posts=posts)
 
 @app.route('/admin/user/<int:user_id>/role', methods=['POST'])
 @admin_required
@@ -1150,7 +1143,7 @@ def update_user_role(user_id):
     user = User.query.get_or_404(user_id)
     new_role = request.form.get('role')
     
-    if new_role not in ['user', 'moderator', 'admin']:
+    if new_role not in ['user', 'admin']:
         flash('Invalid role specified.', 'danger')
         return redirect(url_for('admin_dashboard'))
     
@@ -1182,9 +1175,9 @@ def delete_user(user_id):
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/post/<int:post_id>/delete', methods=['POST'])
-@moderator_required
+@admin_required
 def delete_post(post_id):
-    """Delete a forum post (moderator/admin only)"""
+    """Delete a forum post (admin only)"""
     post = Post.query.get_or_404(post_id)
     category_id = post.category_id
     
@@ -1195,6 +1188,41 @@ def delete_post(post_id):
     db.session.commit()
     flash('Post has been deleted.', 'success')
     return redirect(url_for('view_category', category_id=category_id))
+
+@app.route('/admin/forum/add', methods=['POST'])
+@admin_required
+def add_forum():
+    name = request.form.get('forum_name', '').strip()
+    desc = request.form.get('forum_desc', '').strip()
+    if not name or not desc:
+        flash('Forum name and description are required.', 'danger')
+        return redirect(url_for('admin_dashboard'))
+    if Category.query.filter_by(name=name).first():
+        flash('A forum with this name already exists.', 'warning')
+        return redirect(url_for('admin_dashboard'))
+    new_forum = Category(name=name, description=desc)
+    db.session.add(new_forum)
+    db.session.commit()
+    flash('Forum added successfully.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/forum/<int:category_id>/delete', methods=['POST'])
+@admin_required
+def delete_forum(category_id):
+    forum = Category.query.get_or_404(category_id)
+    db.session.delete(forum)
+    db.session.commit()
+    flash('Forum deleted successfully.', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/admin/reply/<int:reply_id>/delete', methods=['POST'])
+@admin_required
+def delete_reply(reply_id):
+    reply = Reply.query.get_or_404(reply_id)
+    db.session.delete(reply)
+    db.session.commit()
+    flash('Reply deleted successfully.', 'success')
+    return redirect(url_for('admin_dashboard'))
 
 @app.route('/logout')
 @login_required

@@ -214,6 +214,7 @@
                 <h1 style="margin:0; font-size:2rem;">Admin Dashboard</h1>
                 <p style="margin:0; font-size:1rem;">Manage users, roles, and monitor platform activity</p>
             </div>
+              
             <a href="{{ url_for('logout') }}" class="logout-btn" style="position:static; background:white; color:#387F39;">Logout</a>
         </div>
 
@@ -231,12 +232,8 @@
             <h3>{{ stats.admins }}</h3>
         </div>
         <div class="stat-card">
-            <p>Moderators</p>
-            <h3>{{ stats.moderators }}</h3>
-        </div>
-        <div class="stat-card">
-            <p>Regular Users</p>
-            <h3>{{ stats.regular_users }}</h3>
+            <p>Forum Categories</p>
+            <h3>{{ categories|length }}</h3>
         </div>
         <div class="stat-card">
             <p>Forum Posts</p>
@@ -271,8 +268,6 @@
                         <td>
                             {% if user.role == 'admin' %}
                                 <span class="role-badge role-admin">Admin</span>
-                            {% elif user.role == 'moderator' %}
-                                <span class="role-badge role-moderator">Moderator</span>
                             {% else %}
                                 <span class="role-badge role-user">User</span>
                             {% endif %}
@@ -283,7 +278,6 @@
                                 <form method="POST" action="{{ url_for('update_user_role', user_id=user.id) }}" style="display: inline-block;">
                                     <select name="role" onchange="this.form.submit()">
                                         <option value="user" {% if user.role in [None, '', 'user'] %}selected{% endif %}>User</option>
-                                        <option value="moderator" {% if user.role == 'moderator' %}selected{% endif %}>Moderator</option>
                                         <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
                                     </select>
                                 </form>
@@ -303,6 +297,116 @@
             </table>
         </div>
     </div>
+      <!-- Forum Management Section -->
+                <div class="forums-table" style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 40px;">
+                    <h2 style="background: #387F39; color: white; padding: 20px; margin: 0;">Forum Management</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in categories %}
+                                <tr>
+                                    <td>{{ category.id }}</td>
+                                    <td>{{ category.name }}</td>
+                                    <td>{{ category.description }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('delete_forum', category_id=category.id) }}" onsubmit="return confirm('Are you sure you want to delete this forum?');" style="display:inline-block;">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div style="padding: 20px; border-top: 1px solid #e0e0e0;">
+                        <form method="POST" action="{{ url_for('add_forum') }}" style="display: flex; gap: 12px; align-items: flex-end;">
+                            <div>
+                                <label for="forum_name">Forum Name</label>
+                                <input type="text" id="forum_name" name="forum_name" required style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div>
+                                <label for="forum_desc">Description</label>
+                                <input type="text" id="forum_desc" name="forum_desc" required style="padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add Forum</button>
+                        </form>
+                    </div>
+                </div>
+            <!-- Post & Replies Management Section -->
+            <div class="posts-table" style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 40px;">
+                <h2 style="background: #387F39; color: white; padding: 20px; margin: 0;">Post & Replies Management</h2>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Post ID</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for post in posts %}
+                            <tr>
+                                <td>{{ post.id }}</td>
+                                <td>{{ post.title }}</td>
+                                <td>{{ post.user.username if post.user else 'N/A' }}</td>
+                                <td>{{ post.category.name if post.category else 'N/A' }}</td>
+                                <td>{{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" onsubmit="return confirm('Delete this post and all its replies?');" style="display:inline-block;">
+                                        <button type="submit" class="btn btn-danger">Delete Post</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% if post.replies %}
+                            <tr>
+                                <td colspan="6">
+                                    <strong>Replies:</strong>
+                                    <table style="width:100%; margin-top:8px;">
+                                        <thead>
+                                            <tr>
+                                                <th>Reply ID</th>
+                                                <th>Content</th>
+                                                <th>Author</th>
+                                                <th>Created</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for reply in post.replies %}
+                                            <tr>
+                                                <td>{{ reply.id }}</td>
+                                                <td>{{ reply.content }}</td>
+                                                <td>{{ reply.user.username if reply.user else 'N/A' }}</td>
+                                                <td>{{ reply.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                                <td>
+                                                    <form method="POST" action="{{ url_for('delete_reply', reply_id=reply.id) }}" onsubmit="return confirm('Delete this reply?');" style="display:inline-block;">
+                                                        <button type="submit" class="btn btn-danger">Delete Reply</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 </div>
 </body>
 </html>
